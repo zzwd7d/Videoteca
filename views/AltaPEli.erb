@@ -1,0 +1,272 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+     <style>
+         body
+         {
+             font-family: Verdana,Comic Sans MS;
+             background-color:#E0E0E0 ;
+             font-size: 13px;
+         }
+
+         td.peliid
+         {
+             font-size: 32px;
+         }
+
+         .consulta
+         {
+             border:none;
+             background-color:#E0E0E0 ;
+             font-size: 13px;
+         }
+
+         .entrada
+         {
+             border:none;
+             font-size: 13px;
+         }
+
+         a.msgerr
+         {
+             color: #ff0000;
+             font-weight:bold;
+         }
+
+         div.general {
+             margin: 0px;
+             padding: 0;
+             border-collapse: collapse;
+             width: 530px;
+             height: 165px;
+             overflow: hidden;
+             border: 1px solid black;
+         }
+
+         table.tab-titulo {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             color: White;
+             width: 530px;
+             height: 20px;
+             text-align: left;
+             background-color: Grey;
+         }
+
+         .detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+         }
+
+         div.gral-detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             width: 530px;
+             height: 145px;
+             overflow: auto;
+         }
+
+         table.tab-detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             width: 510px;
+         }
+
+     </style>
+     <title>Peliculas (<%= settings.ambiente %>)</title>
+   </head>
+   <body>
+      <table style="text-align: left; width: 1020px; height: 610px;" border="1" cellpadding="2" cellspacing="2">
+            <tr>
+                <% if @Modo == "ALTA" %>
+                   <td style="width: 25%; vertical-align: top;">
+                     <form method="POST" action="/muestraLista" >
+                       <div style="text-align: center;">
+                         <span style="font-weight: bold;">Buscador IMDB</span>
+                       </div>
+                       <input type="text" value="<%= @Key %>" name="KeyName" style="width: 220px" />
+                       <input type="submit" value="BUSCAR" />
+                     </form>
+                     <form method="POST" action="/muestraPeli" >
+                       <input type="hidden" name="Xmovies" value="<%= arma2(@movies_list) %>">
+                       <select name="MovieCode"  size="28"  style="width:100%" >
+                         <% if @movies_list.size > 0 %>
+                             <% @movies_list.each do |user| %>
+                                 <option value ="<%= user[1] %>"
+                                 <% if user[1] == @movie_code %>
+                                    selected
+                                 <% end %>
+                                 ><%= user[0] %> </option>
+                             <% end %>
+                         <% end %>
+                       </select>
+                       <input value="Buscar Película" name="busca" type="submit">
+                     </form>
+                   </td>
+               <% end %>
+               <td style="width: 75%; vertical-align: top;">
+                 <form method="POST" action="/guardarPeli" name="unapeli">
+                     <table style="text-align: left; width: 765px; height: 550px;" border="1">
+
+                           <tr>
+                              <td colspan="1" rowspan="11" style="width: 201px; height: 278px; vertical-align: top;">
+                                <input name="poster" alt="no poster"
+                                       src= <% if @peli.imdbCode == "" %>
+                                               "<%= "/images/default.jpg" %>"
+                                            <% else %>
+                                               "<%= "/posters/" + @peli.imdbCode + ".jpg" %>"
+                                            <% end %>
+                                       value="" height="278" type="image" width="201" >
+                              </td>
+                              <td style="width: 110px; height: 15px; text-align: right;">Título:&nbsp;</td>
+                              <td style="width: 434px;" ><input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" tabindex="1" name="Xtitulo" value="<%= @peli.titulo %>"></td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Año:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="15" size="60" tabindex="2" name="Xanio" value="<%= @peli.anio %>"></td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Título original:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %>  value="<%= @peli.tituloOriginal %>" maxlength="100" size="60" tabindex="3" name="Xoriginal"></td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Dirigida por:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xdirector" value="<%= junta(@peli.directors) %>"> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Escrita por:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xwriter" value="<%= junta(@peli.writers) %>"> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Género:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xgenero" value="<%= junta(@peli.generos) %>"> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">País:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xnacion" value="<%= junta(@peli.nacions) %>"> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Idioma:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xidioma" value="<%= junta(@peli.idiomas) %>"> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Sonido:&nbsp;</td>
+                              <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xsonido" value="<%= junta(@peli.sonidos) %>"> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;">Color:&nbsp;</td>
+                              <td>  <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Xcolor" value="<%= junta(@peli.colors) %>"> </td>
+                           </tr>
+                           <tr>
+                             <td style=" height: 15px; text-align: right;">Formato:&nbsp; </td>
+                             <td>
+                               <% if @Modo == "ALTA" %>
+                                   <select class="<%= modo() %>" name="Xformato">
+                                     <% FORMATOS.each do |key,value| %>
+                                         <option value ="<%= key %>"
+                                                 <% if key == @peli.formato %>
+                                                 selected
+                                                 <% end %>
+                                                 ><%= value %> </option>
+                                     <% end %>
+                                   </select>
+                               <% else %>
+                                   <input class="consulta" readonly maxlength="100" size="60" name="Xformato" value="<%= FORMATOS[@peli.formato] %>">
+                               <% end %>
+                             </td>
+                           </tr>
+
+                           <tr>
+                             <td colspan="1" rowspan="2" class="peliid" style="text-align: center;" >
+                               <% if @peli.id.nil? %>
+                                   <%=  %>
+                               <% else %>
+                                   <%= "#"+@peli.id.to_s.rjust(4, "0") %>
+                               <% end %>
+                             </td>
+                             <td style="height: 15px; text-align: right;">Medio:&nbsp;</td>
+                             <td>
+                               <% if @Modo == "ALTA" %>
+                                   <select class="<%= modo() %>" name="Xmedia">
+                                     <% MEDIAS.each do |key, value| %>
+                                         <option value ="<%=key %>"
+                                                 <% if key == @peli.media %>
+                                                 selected
+                                                 <% end %>
+                                                 ><%= value %> </option>
+                                     <% end %>
+                                   </select>
+                               <% else %>
+                                   <input class="consulta" readonly maxlength="100" size="60" name="Xmedia" value="<%= MEDIAS[@peli.media] %>">
+                               <% end %>
+                             </td>
+                           </tr>
+                           <tr>
+                             <td style="height: 15px; text-align: right;">IMDB Code:&nbsp;</td>
+                             <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Ximdb" value="<%= @peli.imdbCode %>"></td>
+                           </tr>
+                           <tr>
+                             <td style="width: 201px;">Observacion:&nbsp;
+                               <textarea class="<%= modo() %>" <%= modif() %> cols="21" rows="8" name="Xobserv"><%=@peli.comment%></textarea>
+                             </td>
+                             <td  colspan="2" rowspan="2" style="width: 544px; vertical-align: top;">
+                               <input type="hidden" name="Xelenco" value="<%= junta2(@peli.elencos) %>">
+                               <input type="hidden" name="Xmovies2" value="<%= arma2(@movies_list) %>">
+                               <div class="general">
+                                 <table class="tab-titulo">
+                                   <colgroup>
+                                     <col width="200px"/>
+                                     <col width="310px"/>
+                                     <col width="16px"/>
+                                   </colgroup>
+                                   <tbody>
+                                   <tr class="det-titulo">
+                                     <th class="detalle">Elenco</th>
+                                     <th class="detalle"> </th>
+                                     <th class="detalle"> </th>
+                                   </tr>
+                                   </tbody>
+                                 </table>
+                                 <div class="gral-detalle">
+                                   <table class="tab-detalle">
+                                     <colgroup>
+                                       <col width="200px"/>
+                                       <col width="310px"/>
+                                     </colgroup>
+                                     <tbody class="detalle">
+
+                                         <% @peli.elencos.each do |valor| %>
+                                             <tr class="detalle">
+                                               <td><%= valor.nombre %></td>
+                                               <td><%= valor.personaje %></td>
+                                             </tr >
+                                         <% end %>
+
+                                     </tbody>
+                                   </table>
+                                 </div>
+                               </div>
+                             </td>
+                           </tr>
+                     </table>
+                    <div style="text-align: right;width: 765px;height: 20px;">
+                      <a class="msgerr" style="text-align: left; width: 765px;"> <%= @error_msg %> </a>
+                    </div>
+                    <div style="text-align: right;width: 765px;height: 20px;">
+                      <input name="botonera" value="Volver" align=right type="submit">
+                      <% if @peli.id.nil? %>
+                          <input name="botonera" value="Guardar Película" align="right" type="submit">
+                      <% end %>
+                    </div>
+                  </form>
+               </td>
+            </tr>
+      </table>
+      <br>
+   </body>
+</html>
