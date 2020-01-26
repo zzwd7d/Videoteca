@@ -94,13 +94,13 @@
                         <% end %>
                             <td class="<%= tdcolor(n) %>" style="width: 64px; height: 100px;border-collapse:collapse;">
                               <a href="<%= "/consulta/"+cada.id.to_s %>">
-                              <img alt="no poster" src="<%= "./posters/"+cada.imdbCode+".jpg" %>"  height="95" width="64" >
+                              <img alt="no poster" src="<%= "./posters/"+cada.imdb_code+".jpg" %>"  height="95" width="64" >
                               </a>
                             </td>
                             <td class="<%= tdcolor(n) %>" style="width: 239px; height: 100px;border-collapse:collapse;">
                                 <a class="titulo"><%= cada.titulo %></a><br>
                                 <%= cada.anio %><br>
-                                <%= cada.tituloOriginal %>
+                                <%= cada.titulo_original %>
                             </td>
                             <td class="<%= tdcolor(n) %>" style="height: 100px; width: 20px;border-collapse:collapse;">
                                 <img src="./images/edit.png" alt="Modificar"  height="20" title="Modificar">

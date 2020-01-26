@@ -72,7 +72,7 @@ def es_completa
     @error_msg = "Debe informarse un ano"
   elsif @peli.anio.to_i <= 0
     @error_msg = "El ano debe ser numerico"
-  elsif @peli.tituloOriginal == ""
+  elsif @peli.titulo_original == ""
     @error_msg = "Debe informarse un titulo original"
   elsif @peli.formato == "N/A"
     @error_msg = "Debe informarse un formato"

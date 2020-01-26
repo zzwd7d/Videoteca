@@ -1,40 +1,59 @@
 require "sinatra"
+require 'sinatra/activerecord'
 require "./constantes"
-require "./IMDB2"
+require "./IMDB3"
 require "./varios"
 require "open-uri"
 require "will_paginate"
-require "will_paginate/data_mapper"
+require "will_paginate/active_record"
+require 'openssl'
+require 'yaml'
 
+OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
 enable :sessions, :logging
 
-configure(:production){
-set :port,8080
-set :ambiente,"Produccion"
-set :dbname,'peliculas_prod'
-set :pelisXdirec, 2
-set :pelisXactor, 4
-p "ARRANCA PRODUCCION"
-}
+@config = YAML.load_file("config.yml")
 
-configure(:development){
-set :port,4567
-set :ambiente,"Desarrollo"
-set :dbname,'peliculas_desa'
-set :pelisXdirec, 2
-set :pelisXactor, 2
-p "ARRANCA DESARROLLO"
-}
+set :ambiente, @config['servicio']['ambiente']
+set :port, @config['servicio']['port']
+
+set :pelisXdirec, @config["params"]["pelisXdirec"]
+set :pelisXactor, @config["params"]["pelisXactor"]
+
+set :dbadapter, @config["base"]["adapter"]
+set :dbhost, @config["base"]["host"]
+set :dbport, @config["base"]["port"]
+set :dbusername, @config["base"]["username"]
+set :dbpassword, @config["base"]["password"]
+set :dbase, @config["base"]["dbname"]
+
+p "ARRANCA #{@config['servicio']['ambiente']}"
 
 configure do
   Version = Sinatra::VERSION
 end
 
-require "./modelo"
+require './models/pelicula'
+require './models/director'
+require './models/elenco'
+require './models/genero'
+require './models/color'
+require './models/idioma'
+require './models/nacion'
+require './models/sonido'
+require './models/writer'
+
 require "./transf_peli"
 
-
+ActiveRecord::Base.establish_connection(
+  :adapter  => settings.dbadapter,
+  :host     => settings.dbhost, 
+  :port     => settings.dbport,
+  :username => settings.dbusername,
+  :password => settings.dbpassword,
+  :database => settings.dbase
+)
 
 get '/' do
   redirect "/home"

@@ -116,10 +116,10 @@
                            <tr>
                               <td colspan="1" rowspan="11" style="width: 201px; height: 278px; vertical-align: top;">
                                 <input name="poster" alt="no poster"
-                                       src= <% if @peli.imdbCode == "" %>
+                                       src= <% if @peli.imdb_code == "" %>
                                                "<%= "/images/default.jpg" %>"
                                             <% else %>
-                                               "<%= "/posters/" + @peli.imdbCode + ".jpg" %>"
+                                               "<%= "/posters/" + @peli.imdb_code + ".jpg" %>"
                                             <% end %>
                                        value="" height="278" type="image" width="201" >
                               </td>
@@ -132,7 +132,7 @@
                            </tr>
                            <tr>
                               <td style=" height: 15px; text-align: right;">Título original:&nbsp;</td>
-                              <td> <input class="<%= modo() %>" <%= modif() %>  value="<%= @peli.tituloOriginal %>" maxlength="100" size="60" tabindex="3" name="Xoriginal"></td>
+                              <td> <input class="<%= modo() %>" <%= modif() %>  value="<%= @peli.titulo_original %>" maxlength="100" size="60" tabindex="3" name="Xoriginal"></td>
                            </tr>
                            <tr>
                               <td style=" height: 15px; text-align: right;">Dirigida por:&nbsp;</td>
@@ -208,7 +208,7 @@
                            </tr>
                            <tr>
                              <td style="height: 15px; text-align: right;">IMDB Code:&nbsp;</td>
-                             <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Ximdb" value="<%= @peli.imdbCode %>"></td>
+                             <td> <input class="<%= modo() %>" <%= modif() %> maxlength="100" size="60" name="Ximdb" value="<%= @peli.imdb_code %>"></td>
                            </tr>
                            <tr>
                              <td style="width: 201px;">Observacion:&nbsp;
