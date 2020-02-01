@@ -24,6 +24,10 @@ class Pelicula < ActiveRecord::Base
     end
   end
 
+  def self.por_imdb_code(a_code)
+    id = Pelicula.where("imdb_code = ?",a_code).first
+  end
+
   def self.por_genero(a_genero)
     if a_genero.nil?
       Pelicula.all.order(:titulo)

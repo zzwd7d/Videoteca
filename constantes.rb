@@ -10,7 +10,7 @@ FORMATOS = {"N/A"=>"Elegir Formato",
 MEDIAS = {"N/A"=>"Elegir Medio",
           "DVDGR"=>"DVD Gr",
           "DVDCH"=>"DVD Ch",
-          "DSK01"=>"DISCO2",
+          "DSK01"=>"QNAP",
           "VHS"=>"VHS"}
 
 DECADAS = [["0000~1939","Anterior a 1940"],

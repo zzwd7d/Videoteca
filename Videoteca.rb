@@ -93,8 +93,12 @@ get '/armaListado' do
 end
 
 get '/consulta/:ref' do
+  arma_consulta(params[:ref])
+end
+  
+def arma_consulta(el_id)
+  @Id = el_id
   @Modo = "CONSULTA"
-  @Id = params[:ref]
   @movies_list = []
   @error_msg = ""
   @peli = Pelicula.busca_por_id(@Id)
@@ -139,8 +143,13 @@ post '/muestraPeli' do
   @movie_code = params[:MovieCode]
   session[:movie_code] = @movie_code
   if @movie_code != ""
-    imdbx = IMDB2.new('movie',@movie_code)
-    @peli = imdb2Peli(imdbx)
+    existe = Pelicula.por_imdb_code(@movie_code)
+	if existe.nil?
+		imdbx = IMDB2.new('movie',@movie_code)
+		@peli = imdb2Peli(imdbx)
+	else
+		arma_consulta(existe.id)
+	end 
   end
   @Key = session[:KeyName]
   @movies_list = separa2(params[:Xmovies])
