@@ -1,6 +1,6 @@
 def junta(x, sep='|')
   res = ""
-
+  	
   x.each do |n|
     if res != ""
       res = res + " " + sep + " "
@@ -91,16 +91,18 @@ def es_completa
 end
 
 def modo
-    salida = "consulta"
-    if @Modo == "ALTA"
-      salida = "entrada"
-    end
+	case @Modo
+		when "ALTA","MODIFICA"
+			salida = "entrada"
+		else
+			salida = "consulta"
+	end
     salida
 end
 
 def modif
   salida = ""
-  if @Modo == "CONSULTA"
+  if @Modo == "CONSULTA" or @Modo == "BAJA" 
     salida = "readonly"
   end
   salida

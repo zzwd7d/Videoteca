@@ -81,7 +81,7 @@
      <title>Peliculas (<%= settings.ambiente %>)</title>
    </head>
    <body>
-      <table style="text-align: left; width: 1020px; height: 610px;" border="1" cellpadding="2" cellspacing="2">
+      <table style="text-align: left; width: 1020px; height: 610px;" border="0" cellpadding="2" cellspacing="2">
             <tr>
                 <% if @Modo == "ALTA" %>
                    <td style="width: 25%; vertical-align: top;">
@@ -105,6 +105,7 @@
                              <% end %>
                          <% end %>
                        </select>
+					   <input type="text" value="<%= @movie_code %>" name="imdbCode" style="width: 220px" />
                        <input value="Buscar Película" name="busca" type="submit">
                      </form>
                    </td>
@@ -114,9 +115,9 @@
                      <table style="text-align: left; width: 765px; height: 550px;" border="1">
 
                            <tr>
-                              <td colspan="1" rowspan="11" style="width: 201px; height: 278px; vertical-align: top;">
-                                <input name="poster" alt="no poster"
-                                       src= <% if @peli.imdb_code == "" %>
+                              <td colspan="1" rowspan="11" style="wid0th: 201px; height: 278px; vertical-align: top;">
+                                <input name="poster" alt="no poster"1
+                                       src= <% if @Modo == "ALTA" and @peli.imdb_code == "" %>
                                                "<%= "/images/default.jpg" %>"
                                             <% else %>
                                                "<%= "/posters/" + @peli.imdb_code + ".jpg" %>"
@@ -165,7 +166,7 @@
                            <tr>
                              <td style=" height: 15px; text-align: right;">Formato:&nbsp; </td>
                              <td>
-                               <% if @Modo == "ALTA" %>
+                               <% if modo() == "entrada" %>
                                    <select class="<%= modo() %>" name="Xformato">
                                      <% FORMATOS.each do |key,value| %>
                                          <option value ="<%= key %>"
@@ -183,7 +184,7 @@
 
                            <tr>
                              <td colspan="1" rowspan="2" class="peliid" style="text-align: center;" >
-                               <% if @peli.id.nil? %>
+                               <% if @Modo == "ALTA" %>
                                    <%=  %>
                                <% else %>
                                    <%= "#"+@peli.id.to_s.rjust(4, "0") %>
@@ -191,7 +192,7 @@
                              </td>
                              <td style="height: 15px; text-align: right;">Medio:&nbsp;</td>
                              <td>
-                               <% if @Modo == "ALTA" %>
+                               <% if modo() == "entrada" %>
                                    <select class="<%= modo() %>" name="Xmedia">
                                      <% MEDIAS.each do |key, value| %>
                                          <option value ="<%=key %>"
@@ -259,8 +260,14 @@
                     </div>
                     <div style="text-align: right;width: 765px;height: 20px;">
                       <input name="botonera" value="Volver" align=right type="submit">
-                      <% if @peli.id.nil? %>
+                      <% if @Modo == "ALTA" %>
                           <input name="botonera" value="Guardar Película" align="right" type="submit">
+                      <% end %>
+                      <% if @Modo == "MODIFICA" %>
+                          <input name="botonera" value="Modificar Película" align="right" type="submit">
+                      <% end %>
+                      <% if @Modo == "ELIMINA" %>
+                          <input name="botonera" value="Eliminar Película" align="right" type="submit">
                       <% end %>
                     </div>
                   </form>

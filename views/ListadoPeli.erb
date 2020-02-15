@@ -103,8 +103,12 @@
                                 <%= cada.titulo_original %>
                             </td>
                             <td class="<%= tdcolor(n) %>" style="height: 100px; width: 20px;border-collapse:collapse;">
-                                <img src="./images/edit.png" alt="Modificar"  height="20" title="Modificar">
-                                <img src="./images/trash.png" alt="Eliminar"  height="20" title="Baja">
+                                <a href="<%= "/modifica/"+cada.id.to_s %>">
+									<img src="./images/edit.png" alt="Modificar"  height="20" title="Modificar">
+								</a>
+                                <a href="<%= "/elimina/"+cada.id.to_s %>">
+									<img src="./images/trash.png" alt="Eliminar"  height="20" title="Baja">
+								</a>
                                 <a href="<%= "/consulta/"+cada.id.to_s %>">
                                     <img src="./images/search.png" alt="Consultar" height="20" title="Consulta">
                                 </a>

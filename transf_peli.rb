@@ -92,8 +92,12 @@ def peliDummy
   k
 end
 
-def post2Peli
-  k = Pelicula.new
+def post2Peli(m)
+  if m == "ALTA"
+	k = Pelicula.new
+  else
+	k = Pelicula.busca_por_id(session[:pelicula_id].to_i)
+  end
   k.titulo = params[:Xtitulo]
   k.titulo_original = params[:Xoriginal]
   k.anio = params[:Xanio]
@@ -103,6 +107,16 @@ def post2Peli
   k.comment = params[:Xobserv]
   k.fecha = Time.now 
 
+  if m == "MODIFICA"
+	k.directors.destroy_all
+	k.writers.destroy_all
+	k.generos.destroy_all
+	k.nacions.destroy_all
+	k.idiomas.destroy_all
+	k.sonidos.destroy_all
+	k.colors.destroy_all
+  end	
+	
   separa(params[:Xdirector]).each  do |cada|
     k.directors.new({:nombre => cada})
   end
@@ -126,19 +140,20 @@ def post2Peli
   separa(params[:Xsonido]).each  do |cada|
     k.sonidos.new({:nombre => cada})
   end
-
+  
   separa(params[:Xcolor]).each  do |cada|
     k.colors.new({:nombre => cada})
   end
 
-  n = 1
-  separa2(params[:Xelenco]).each  do |cada|
-    k.elencos.new({:nombre => cada[0],
-                   :personaje => ((cada[1] == "" || cada[1].nil?)  ? " " : cada[1]),
-                   :orden => n})
-    n = n + 1
+  if m == "ALTA"
+	  n = 1
+	  separa2(params[:Xelenco]).each  do |cada|
+		k.elencos.new({:nombre => cada[0],
+					   :personaje => ((cada[1] == "" || cada[1].nil?)  ? " " : cada[1]),
+					   :orden => n})
+		n = n + 1
+	  end
   end
-
   k
 
 end

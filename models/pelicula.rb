@@ -1,12 +1,12 @@
 class Pelicula < ActiveRecord::Base
-  has_many :generos
-  has_many :idiomas
-  has_many :colors
-  has_many :nacions
-  has_many :directors
-  has_many :writers
-  has_many :elencos
-  has_many :sonidos
+  has_many :generos, :dependent => :delete_all
+  has_many :idiomas, :dependent => :delete_all
+  has_many :colors, :dependent => :delete_all
+  has_many :nacions, :dependent => :delete_all
+  has_many :directors, :dependent => :delete_all
+  has_many :writers, :dependent => :delete_all
+  has_many :elencos, :dependent => :delete_all
+  has_many :sonidos, :dependent => :delete_all
 
   def self.por_director(a_nombre)
     if a_nombre.nil?

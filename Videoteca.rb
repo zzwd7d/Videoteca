@@ -93,12 +93,25 @@ get '/armaListado' do
 end
 
 get '/consulta/:ref' do
+  @Modo = "CONSULTA"
+  arma_consulta(params[:ref])
+end
+  
+get '/modifica/:ref' do
+  @Modo = "MODIFICA"
+  arma_consulta(params[:ref])
+end
+  
+get '/elimina/:ref' do
+  @Modo = "ELIMINA"
   arma_consulta(params[:ref])
 end
   
 def arma_consulta(el_id)
   @Id = el_id
-  @Modo = "CONSULTA"
+#  @Modo = "CONSULTA"
+  session[:modo] = @Modo
+  session[:pelicula_id] = el_id
   @movies_list = []
   @error_msg = ""
   @peli = Pelicula.busca_por_id(@Id)
@@ -116,6 +129,7 @@ post '/alta' do
     redirect "/armaListado?page=1"
   end
   @Modo = "ALTA"
+  session[:modo] = @Modo
   @movies_list = []
   @peli = peliDummy
   @Key = ""
@@ -124,7 +138,7 @@ post '/alta' do
 end
 
 post '/muestraLista'  do
-  @Modo = "ALTA"
+  @Modo = session[:modo]
   @Key = params[:KeyName]
   session[:KeyName] = @Key
   if @Key == ""
@@ -139,8 +153,13 @@ post '/muestraLista'  do
 end
 
 post '/muestraPeli' do
-  @Modo = "ALTA"
-  @movie_code = params[:MovieCode]
+  @Modo = session[:modo]
+  if params[:imdbCode] == ""
+	  @movie_code = params[:MovieCode]
+	else
+	  @movie_code = params[:imdbCode]	
+  end
+ # @movie_code = params[:MovieCode]
   session[:movie_code] = @movie_code
   if @movie_code != ""
     existe = Pelicula.por_imdb_code(@movie_code)
@@ -158,22 +177,29 @@ post '/muestraPeli' do
 end
 
 post '/guardarPeli' do
-  @Modo = "ALTA"
+  @Modo = session[:modo]
   if params[:botonera] == "Volver"
     redirect "/armaListado?page="+ session[:nro_page]
   end
-  @error_msg = ""
-  @peli = post2Peli
-  if es_completa
-    begin
-      @peli.save
-    rescue => e
-      @error_msg = e.message
-    end
-  end
-  @Key = session[:KeyName]
-  @movies_list = separa2(params[:Xmovies2])
-  @movie_code = session[:movie_code]
-  erb :AltaPEli
+  case params[:botonera] 
+	when "Guardar Película","Modificar Película"
+		@error_msg = ""
+		@peli = post2Peli(@Modo)
+		if es_completa
+			begin
+			  @peli.save
+			rescue => e
+			  @error_msg = e.message
+			end
+		end
+		@Key = session[:KeyName]
+		@movies_list = separa2(params[:Xmovies2])
+		@movie_code = session[:movie_code]
+		@Modo = "CONSULTA"
+		erb :AltaPEli
+	when "Eliminar Película"
+		Pelicula.where(id: session[:pelicula_id].to_i).destroy_all
+		redirect "/armaListado?page="+ session[:nro_page]
+	end
 end
 
