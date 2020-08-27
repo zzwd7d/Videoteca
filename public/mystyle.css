@@ -1,7 +1,7 @@
 body 
 {
-font-family: Verdana,Comic Sans MS;
-background-color:#E0E0E0 ;
+font-family: Comic Sans MS;
+background-color:white ;
 font-size: 13px;
 }
 
@@ -29,10 +29,17 @@ textarea.consulta
 
 }
 
+
 a.msgerr
 {
     color: #ff0000;
     font-weight:bold;
+}
+
+.combos
+{
+	font-family: Comic Sans MS;
+	font-size: 16px;
 }
 
 .color1
@@ -71,7 +78,7 @@ a.msgerr
 }
 
 .digg_pagination {
-    background: #E0E0E0;
+    background: white;
     cursor: default;
     text-align: right;
     /* self-clearing method: */ }

@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Peliculas (<%= settings.ambiente %>)</title>
+
+</head>
+
+<body>
+
+    <form id="vid01" method="POST" action="/dimensiones" name="vid01">
+        <input name="xwidth" value="" type="hidden" >
+        <input name="xheight" value="" type="hidden" >
+        <input name="iwidth" value="" type="hidden" >
+        <input name="iheight" value="" type="hidden" >
+    </form>
+
+
+   
+<script type="text/javascript">
+
+	var Iwidth = window.innerWidth ; 
+	var Iheight = window.innerHeight ;  
+
+	var Xwidth = screen.width ; 
+	var Xheight = screen.height ;   
+
+	document.getElementsByName("xwidth")[0].value = Xwidth;
+	document.getElementsByName("xheight")[0].value = Xheight;
+	document.getElementsByName("iwidth")[0].value = Iwidth;
+	document.getElementsByName("iheight")[0].value = Iheight;
+	document.getElementById("vid01").submit();
+
+</script>
+
+
+</body>
+</html>

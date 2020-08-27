@@ -1,17 +1,17 @@
 
-FORMATOS = {"N/A"=>"Elegir Formato",
-            "TS"=>"DVD TS",
-            "ISO"=>"DVD ISO",
-            "MKV"=>"MKV",
-            "AVI"=>"AVI",
-            "MP4"=>"MP4",
-            "VHS"=>"VHS"}
+FORMATOS = [["N/A","Elegir Formato"],
+            ["TS","DVD TS"],
+            ["ISO","DVD ISO"],
+            ["MKV","MKV"],
+            ["AVI","AVI"],
+            ["MP4","MP4"],
+            ["VHS","VHS"]]
 
-MEDIAS = {"N/A"=>"Elegir Medio",
-          "DVDGR"=>"DVD Gr",
-          "DVDCH"=>"DVD Ch",
-          "DSK01"=>"QNAP",
-          "VHS"=>"VHS"}
+MEDIAS = [["N/A","Elegir Medio"],
+          ["DVDGR","DVD Gr"],
+          ["DVDCH","DVD Ch"],
+          ["DSK01","QNAP"],
+          ["VHS","VHS"]]
 
 DECADAS = [["0000~1939","Anterior a 1940"],
            ["1940~1949","Decada 1940"],
@@ -23,10 +23,5 @@ DECADAS = [["0000~1939","Anterior a 1940"],
            ["2000~2009","Decada 2000"],
            ["2010~9999","Decada 2010"]]
 
-PELXPAG = 12
-
-
-
-@error_msg = " "
 
 

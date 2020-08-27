@@ -19,8 +19,8 @@ class IMDB2
         @doc = Nokogiri::HTML(f)
         break
       rescue => e
-        p "ERROR "+"("+n.to_s+" de 5) buscando "+url+ " -> error: "+e.message
-		sleep(10)
+        puts "ERROR "+"("+n.to_s+" de 5) buscando "+url+ " -> error: "+e.message
+		    sleep(10)
       end
     end
   end
@@ -47,14 +47,13 @@ class IMDB2
   end
   
   def es_serie
-	es_serie = false
-	serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
-	aux = serie_text.split('|')
-	if aux[-1].strip.include? "TV Serie"
-		es_serie = true
-	end 
-  
-	es_serie
+	  es_serie = false
+	  serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
+	  aux = serie_text.split('|')
+	  if aux[-1].strip.include? "TV Serie"
+		  es_serie = true
+	  end 
+  	es_serie
   end
 
   def title
@@ -83,9 +82,9 @@ class IMDB2
       aux[2] = aux[0]
     end
    
-	title << sin_C2A0(aux[0]).strip
-	title << sin_C2A0(aux[2]).strip
-	title << @code
+	  title << sin_C2A0(aux[0]).strip
+	  title << sin_C2A0(aux[2]).strip
+	  title << @code
 
     title
   end
@@ -93,13 +92,13 @@ class IMDB2
   def title_serie
     title = []
     title << @doc.xpath('//div[@class="title_wrapper"]/h1').text.strip
-	title_text = @doc.xpath('//div[@class="title_wrapper"]/div[@class="originalTitle"]').text.split('(')[0]
-	if title_text.nil? 
-		title << title[0]
-	else
-		title << title_text.strip 
-	end
-	title << @code
+	  title_text = @doc.xpath('//div[@class="title_wrapper"]/div[@class="originalTitle"]').text.split('(')[0]
+	  if title_text.nil? 
+		  title << title[0]
+	  else
+		  title << title_text.strip 
+	  end
+	  title << @code
 	
     title
   end
@@ -110,85 +109,83 @@ class IMDB2
     title_text = title_text.delete("\n").delete("\"").gsub(/[()]/, '|')
     aux = title_text.split('|')
    
-	title << aux[1]
+	  title << aux[1]
 
     title
 
   end
 
   def anio_serie
-	title =	[]
-	serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
-	aux = serie_text.split('|')
+	  title =	[]
+	  serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
+	  aux = serie_text.split('|')
 	
-	title << aux[-1].split('(')[1].split(')')[0]
+	  title << aux[-1].split('(')[1].split(')')[0]
 
-	title
+	   title
   end
 
   def director
     salida = []
     x_text = @doc.xpath('//div[@class="credit_summary_item"]').text #.delete("\n")
-	aux = x_text.split("\n")
-	aux.each_with_index do |valor, ind| 
-		if valor.include? "Director" 
-			aux[ind+1].split(',').each do |name|
-				salida << name.delete('|').strip
-			end
-			break
-		end	
-	end	 
+	  aux = x_text.split("\n")
+	  aux.each_with_index do |valor, ind| 
+		  if valor.include? "Director" 
+			  aux[ind+1].split(',').each do |name|
+				  salida << name.delete('|').strip
+			  end
+			  break
+		  end	
+	  end	 
     salida
   end
-
-  
   
   def genre
     salida = []
-	x_text = @doc.xpath('//div[@class="see-more inline canwrap"]').text 
-	aux = x_text.split("\n")
-	hay = false
-	aux.each_with_index do |valor, ind| 
-		if hay
-			salida << sin_C2A0(valor.delete("|")).strip
-			if not valor.include? "|"
-				hay = false
-			end
-		end
-		if valor.include? "Genre"
-			hay = true		
-		end
-	end
+  	x_text = @doc.xpath('//div[@class="see-more inline canwrap"]').text 
+	  aux = x_text.split("\n")
+	  hay = false
+	  aux.each_with_index do |valor, ind| 
+		  if hay
+			  salida << sin_C2A0(valor.delete("|")).strip
+			  if not valor.include? "|"
+				  hay = false
+			  end
+		  end
+		  if valor.include? "Genre"
+			  hay = true		
+		  end
+	  end
     salida
   end
 
   def writer
     salida = []
     x_text = @doc.xpath('//div[@class="credit_summary_item"]').text #.delete("\n")
-	aux = x_text.split("\n")
-	aux.each_with_index do |valor, ind| 
-		if valor.include? "Writer" 
-			aux[ind+1].split(',').each do |name|
-				salida << name.delete('|').split('(')[0].strip
-			end
-			break
-		end	
-	end	 
+	  aux = x_text.split("\n")
+	  aux.each_with_index do |valor, ind| 
+		  if valor.include? "Writer" 
+			  aux[ind+1].split(',').each do |name|
+				  salida << name.delete('|').split('(')[0].strip
+			  end
+			  break
+		  end	
+	  end	 
     salida
   end
 
   def creator
     salida = []
     x_text = @doc.xpath('//div[@class="credit_summary_item"]').text #.delete("\n")
-	aux = x_text.split("\n")
-	aux.each_with_index do |valor, ind| 
-		if valor.include? "Creator" 
-			aux[ind+1].split(',').each do |name|
-				salida << name.delete('|').split('(')[0].strip
-			end
-			break
-		end	
-	end	 
+	  aux = x_text.split("\n")
+	  aux.each_with_index do |valor, ind| 
+		  if valor.include? "Creator" 
+			  aux[ind+1].split(',').each do |name|
+				  salida << name.delete('|').split('(')[0].strip
+			  end
+			  break
+		  end	
+	  end	 
     salida
   end
 
@@ -228,51 +225,45 @@ class IMDB2
 
   def cast
     salida = []
-	actor = []
+	  actor = []
     personaje = []		
-    @doc.xpath('//table[@class="cast_list"]//td').each_with_index do |valor, ind| 
+    @doc.xpath('//table[@class="cast_list"]//td').each_with_index do |valor, ind| 	
+  		if ind % 2 == 0 and ind > 0 and not(ind % 4 == 0)
+	  		actor << valor.text.delete("\n").strip
+		  end
+		  if ind > 0 and ind % 4 == 0
+			  personaje << internalSpaces(valor.text.delete("\n")).split('(')[0].strip  
+		  end
+	  end
 		
-		if ind % 2 == 0 and ind > 0 and not(ind % 4 == 0)
-			actor << valor.text.delete("\n").strip
-		end
-		if ind > 0 and ind % 4 == 0
-			personaje << internalSpaces(valor.text.delete("\n")).split('(')[0].strip  
-		end
-	end
-		
-	for i in 0..(actor.count - 1 )
-		aux = []
-		aux << actor[i]
-		aux << personaje[i]
-		salida << aux
-	end
-
+	  for i in 0..(actor.count - 1 )
+		  aux = []
+		  aux << actor[i]
+		  aux << personaje[i]
+		  salida << aux
+	  end
     salida
   end
 
   def cast_serie
     salida = []
-	actor = []
+	  actor = []
     personaje = []		
     @doc.xpath('//table[@class="cast_list"]//td').each_with_index do |valor, ind| 
-		if valor.to_s.include? '/name/' and not valor.to_s.include? '<img'
-			actor << valor.text.delete("\n").strip
-		end
-		if valor.to_s.include? 'class="character"'
-			personaje << valor.text.delete("\n").strip.split('  ')[0]
-		end
-	end
-		
-#	puts "actor: #{actor}"
-#	puts "personaje: #{personaje}"
+		  if valor.to_s.include? '/name/' and not valor.to_s.include? '<img'
+			  actor << valor.text.delete("\n").strip
+		  end
+		  if valor.to_s.include? 'class="character"'
+			  personaje << valor.text.delete("\n").strip.split('  ')[0]
+		  end
+	  end
 	
-	for i in 0..(actor.count - 1 )
-		aux = []
-		aux << actor[i]
-		aux << personaje[i]
-		salida << aux
-	end
-
+  	for i in 0..(actor.count - 1 )
+	  	aux = []
+	  	aux << actor[i]
+	  	aux << personaje[i]
+	  	salida << aux
+	  end
     salida
   end
 
@@ -284,30 +275,99 @@ class IMDB2
     @poster
   end
   
-  def json_movie (imdb_obj)
-	res = Hash.new
-	
-	res["imdbcode"] = @code
-	res["original title"] = imdb_obj.title2[1]
-	res["spanish title"] = imdb_obj.title2[0]
-	res["year"] = imdb_obj.anio[0]
-	res["director"] = imdb_obj.director
-	res["writer"] = imdb_obj.writer
-	res["genre"] = imdb_obj.genre
-	res["country"] = imdb_obj.country
-	res["language"] = imdb_obj.language
-	res["sound"] = imdb_obj.sound
-	res["color"] = imdb_obj.color
-	res["cast"] = imdb_obj.cast
-	res["poster"] = imdb_obj.poster[0]
+  def json_movie_old (imdb_obj)
+    res = Hash.new
+    
+    if not(imdb_obj.es_serie)
+      res["spanish title"] = imdb_obj.title2[0]
+      res["original title"]  = imdb_obj.title2[1]
+      res["year"] = imdb_obj.anio[0]
+      res["imdbcode"] = imdb_obj.title2[2]
+      res["writer"] = imdb_obj.writer
+      res["cast"] = imdb_obj.cast
+    else
+      res["spanish title"] = imdb_obj.title_serie[0]
+      res["original title"] = imdb_obj.title_serie[1]
+      res["year"] = imdb_obj.anio_serie[0]
+      res["imdbcode"] = imdb_obj.title_serie[2]
+      res["writer"] =  imdb_obj.creator
+      res["cast"] = imdb_obj.cast_serie
+    end
+  
+	  res["director"] = imdb_obj.director
+	  res["genre"] = imdb_obj.genre
+	  res["country"] = imdb_obj.country
+	  res["language"] = imdb_obj.language
+	  res["sound"] = imdb_obj.sound
+	  res["color"] = imdb_obj.color
+	  res["poster"] = imdb_obj.poster[0]
 
-	res.to_json	
-	
+	  res.to_json	
 	
   end
   
+  def json_movie 
+    res = Hash.new
+	res["id"] = 0
+    if not(self.es_serie)
+      res["titulo"] = self.title2[0]
+      res["titulo_original"]  = self.title2[1]
+      res["anio"] = self.anio[0]
+      res["imdb_code"] = self.title2[2]
+      res["writer"] = peli_2_array(self.writer)
+      elcast = self.cast
+    else
+      res["titulo"] = self.title_serie[0]
+      res["titulo_original"] = self.title_serie[1]
+      res["anio"] = self.anio_serie[0]
+      res["imdb_code"] = self.title_serie[2]
+      res["writer"] =  peli_2_array(self.creator)
+      elcast = self.cast_serie
+    end
+	
+	newcast = []
+	elcast.each do |uno|
+	#	puts "0 #{uno[0]} - 1 #{uno[1]} "
+		newcast.push("nombre" => uno[0],"personaje" =>uno[1])	
+	#	puts newcast
+	end
+	res["elenco"] = newcast
+	res["director"] = peli_2_array(self.director)
+	res["genero"] = peli_2_array(self.genre)
+	res["nacion"] = peli_2_array(self.country)
+	res["idioma"] = peli_2_array(self.language)
+	res["sonido"] = peli_2_array(self.sound)
+	res["color"] = peli_2_array(self.color)
+	
+	ximg = "./public/auxiliar/" + res["imdb_code"] + ".jpg"
+	url_poster = self.poster
+	if url_poster.count == 0
+		FileUtils.copy_file( "./public/images/noposter.jpg",ximg)
+	else
+		File.open(ximg, 'wb') do |fo|
+			fo.write open(url_poster[0]).read
+		end	
+	end
+	res["poster"] = "/auxiliar/" + res["imdb_code"] + ".jpg"
+	res["comment"] = ""
+	res["formato"] = "N/A"
+	res["media"] = "N/A"
+	
+	res
+  end
+  
+  def peli_2_array (x)
+  	newarr = []
+	x.each do |uno|
+		#puts "0 #{uno[0]} - 1 #{uno[1]} "
+		newarr.push("nombre" =>uno)	
+		#puts newcast
+	end
+	newarr
+  end
+  
   def sin_C2A0 (x)
-	x.gsub(/\p{Space}/,' ') unless x.nil?
+	  x.gsub(/\p{Space}/,' ') unless x.nil?
   end
 
   def internalSpaces(txt)

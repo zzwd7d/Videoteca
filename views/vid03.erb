@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+     <style>
+         body
+         {
+             font-family: Comic Sans MS;
+             background-color:white ;
+             font-size: 13px;
+         }
+
+         td.peliid
+         {
+             font-size: 32px;
+         }
+
+         .consulta
+         {
+             border:none;
+             background-color:#E0E0E0 ;
+             font-size: 13px;
+         }
+
+		.combos
+		{
+			font-family: Comic Sans MS;
+			font-size: 16px;
+		}
+
+         .entrada
+         {
+             border:none;
+             font-size: 13px;
+         }
+
+         a.msgerr
+         {
+             color: #ff0000;
+             font-weight:bold;
+         }
+
+         div.general {
+             margin: 0px;
+             padding: 0;
+             border-collapse: collapse;
+             width: 530px;
+             height: 165px;
+             overflow: hidden;
+             border: 1px solid black;
+         }
+
+         table.tab-titulo {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             color: White;
+             width: 530px;
+             height: 20px;
+             text-align: left;
+             background-color: Grey;
+         }
+
+         .detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+         }
+
+         div.gral-detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             width: 530px;
+             height: 145px;
+             overflow: auto;
+         }
+
+         table.tab-detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             width: 510px;
+         }
+
+		.center {
+		  display: block;
+		  margin-left: auto;
+		  margin-right: auto;
+		}
+
+		#tabla-linda {
+			font-family: Comic Sans MS;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		#tabla-linda td, #tabla-linda th {
+		  border: 1px solid #ddd;
+		  padding: 4px;
+		}
+
+		#tabla-linda tr:nth-child(even){background-color: #f2f2f2;}
+
+		#tabla-linda tr:hover {background-color: #ddd;}
+
+		#tabla-linda th {
+		  padding-top: 6px;
+		  padding-bottom: 6px;
+		  text-align: left;
+		  background-color: #666666;
+		  color: white;
+		  position: sticky;
+		  top: 0; /* Don't forget this, required for the stickiness */
+		}
+
+     </style>
+     <title>Peliculas (<%= settings.ambiente %>)</title>
+   </head>
+	<body>
+		<table style="height: 80px" border="0" >
+			<tr>
+				<td style=" width:<%=(session[:iwidth] * 0.33).to_i%>px; min-width:<%=(session[:iwidth] * 0.33).to_i%>px;"  colspan="1" rowspan="3" >
+					<img style="align: left" src="<%= "./images/Video.gif" %>" >
+				</td>	
+
+				<td style=" width:<%=(session[:iwidth] * 0.33).to_i%>px; min-width:<%=(session[:iwidth] * 0.33).to_i%>px;"  colspan="3">			
+					<div style="text-align: center;">
+						<span style="font-weight: bold; font-size: 20px;">Buscador IMDB</span>
+					</div>
+				</td>
+			</tr>
+			<tr>
+				<td class="combos" >Titulo: </td>
+				<td>
+					<input class="combos" type="text" value="" name="KeyName" id="KeyName" style="width: 220px; align: rigth" />
+				</td>
+				<td rowspan="2">
+					<a onClick="poneLista()" >
+						<img src="./images/Buscar.jpg" />
+					</a>  
+				</td>
+			</tr>
+			<tr>
+				<td class="combos" >IMDB Code: </td>
+				<td>
+					<input class="combos" type="text" value="" name="imdbCode" id="imdbCode" style="width: 220px" />
+				</td>
+			</tr>
+		</table>
+
+		<table style="text-align: centre; " border="0" cellpadding="2" cellspacing="2">
+            <tr>
+                <td style=" width:<%=(session[:iwidth] * 0.33).to_i%>px; min-width:<%=(session[:iwidth] * 0.33).to_i%>px; vertical-align: top;">    
+				</td>
+               <td style="width:<%=(session[:iwidth] * 0.33).to_i%>px; min-width:<%=(session[:iwidth] * 0.33).to_i%>px;vertical-align: top;">                  
+					<form method="POST" id="form_id" action="/muestraPeli" >
+                       <select class="combos" name="MovieList" id="MovieList" size="22"  style="width:100%" onchange="elegiUno()">
+                       </select>
+					   <input name="param0" value="" type="hidden" />
+                   </form>
+				   	<a align="right" onClick="window.history.back();" >
+						<img src="./images/Volver.jpg" class="center" />
+					</a>  
+                </td>
+            </tr>
+		</table>
+
+      <br>
+	  
+	  <script>
+		function poneLista() {
+			var url;
+			var parametros;
+
+			if (document.getElementById("imdbCode").value === '') {
+				url = '/generaBusquedaName';
+				parametros = 'KeyName='+document.getElementById("KeyName").value;
+			} else {
+				url = '/generaBusquedaCode';
+				parametros = 'imdbCode='+document.getElementById("imdbCode").value;
+			}
+			
+			var xmlhttp;
+			if (window.XMLHttpRequest){
+				// code for IE7+, Firefox, Chrome, Opera, Safari
+				xmlhttp=new XMLHttpRequest();
+			} else {
+				// code for IE6, IE5
+				xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+			}
+
+			xmlhttp.open("POST",url,true);
+			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			xmlhttp.send(parametros);
+			xmlhttp.onreadystatechange=function(){
+				while(MovieList.options.length > 0) {
+					MovieList.remove(0);
+				}
+				var ret = JSON.parse(xmlhttp.responseText);
+				for (i=0; i < ret.length; i++) {
+					var opt = document.createElement("option");
+					opt.value = ret[i][1];
+					opt.innerHTML = ret[i][0];
+					MovieList.appendChild(opt);
+				}
+			}	 
+
+		}
+		
+		function elegiUno() {
+			document.getElementsByName("param0")[0].value = document.getElementById("MovieList").value;
+			document.getElementById("form_id").submit();
+		}
+		
+	  </script>
+	  
+   </body>
+</html>

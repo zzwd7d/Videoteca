@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+		<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+        <link rel="stylesheet" type="text/css" href="./mystyle.css">
+        <title>Peliculas (<%= settings.ambiente %>)</title>
+    </head>
+    <body>
+		<div>
+			<form method="POST" id="form_id" >  
+				<table style="height: 80px">
+					<tr>
+						<td style="width: 105px"  colspan="1" rowspan="2" >
+							<img src="<%= "./images/Video.gif" %>" >
+						</td>	
+
+<!--						<td style="width: <%=((session[:iwidth]-110) * 0.35).to_i%>px">		-->
+						<td>
+							<select class="combos"  name="Xdirectores">
+								<option value="all">Todos los directores</option>
+								<% @Directores.each do |name| %>
+									<option value ="<%=name[0] %>"
+									<% if name[0] == session[:fdirector] %>
+										selected
+									<% end %>
+									><%= name[0]+" ("+name[1].to_s.strip+")" %> </option>
+								<% end %>
+							</select>
+						</td>
+						<td>
+							<select class="combos"  name="Xelencos">
+								<option value="all">Todos los actores</option>
+								<% @Elencos.each do |name| %>
+									<option value ="<%=name[0] %>"
+									<% if name[0] == session[:felenco] %>
+										selected
+									<% end %>
+									><%= name[0]+" ("+name[1].to_s.strip+")" %> </option>
+								<% end %>
+							</select>
+						</td>
+						<td align="center">
+							<a onclick="nueva_peli();">  
+								<img src="./images/Nueva_pelicula.jpg" />
+							</a>  
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<select class="combos"  name="Xgeneros">
+								<option value="all">Todos los generos</option>
+								<% @Generos.each do |name| %>
+									<option value ="<%=name[0] %>"
+									<% if name[0] == session[:fgenero] %>
+										selected
+									<% end %>
+									><%= name[0]+" ("+name[1].to_s.strip+")" %> </option>
+								<% end %>
+							</select>
+						</td>
+						<td>
+							<select class="combos"  name="Xdecadas">
+								<option value="0000~9999">Todas las decadas</option>
+								<% DECADAS.each do |name| %>
+									<option value ="<%=name[0] %>"
+									<% if name[0] == session[:fdecada] %>
+										selected
+									<% end %>
+									><%= name[1] %> </option>
+								<% end %>
+							</select>
+						</td>
+						<td align="center">
+							<a class="boton" onclick="busqueda();" >
+								<img alt="Buscar" src="./images/Buscar.jpg" >
+							</a> 
+						</td>
+					</tr>
+				</table>
+				<input name="param0" value="" type="hidden" />
+			</form>  
+            <% n=0 %>
+            <table style="border-collapse:collapse;" >			
+                    <%@Lista.each do |cada| %>
+                        <% n=n+1 %>
+                        <% if n.divmod( session[:xcols] )[1] == 1 %>
+                            <tr>
+                        <% end %>
+						<% if n == 1 %>
+							<td style=" width:<%=(session[:iwidth] * 0.04).to_i%>px; min-width:<%=(session[:iwidth] * 0.04).to_i%>px;" rowspan="2" > </td>
+						<% end %>
+                            <td class="color5" style="width: <%=session[:xwidth]%>px; height: <%=session[:xheight]%>px; border-collapse:collapse;">
+							  <a onclick="consulta(<%=cada.id.to_s %>);" >
+                              <img alt="no poster" src="<%= "./posters/"+cada.imdb_code+".jpg" %>" title="<%= cada.titulo %> (<%= cada.anio %>)" height="<%=session[:xheight]%>" width="<%=session[:xwidth]%>" >
+                              </a>
+                            </td>
+                        <% if n.divmod( session[:xcols] )[1] == 0 %>
+                            </tr>
+                        <% end %>
+                    <% end %>
+					
+					<% f = 0 %>
+                    <%(n..(session[:pelxpag]-1)).each do |cada| %>
+                        <% n=n+1 %>
+                        <% if n.divmod( session[:xcols] )[1] == 1 %>
+                            <tr>
+                        <% end %>
+                        <td class="<%= tdcolor(n) %>" style="width: <%=session[:xwidth]%>px; height: <%=session[:xheight]%>px;border-collapse:collapse; min-width:<%=session[:xwidth]%>px;">
+							  &nbsp;
+                        </td>
+						<% f = if f == 2 then 0 else f + 1 end%>
+                        <% if n.divmod(( session[:xcols] ))[1] == 0 %>
+                            </tr>
+                        <% end %>
+                    <% end %>
+
+            </table>
+            <table style="height: 25px">
+               <tr>
+                  <td>
+                      <div class="digg_pagination" style=" text-align: right;  ">
+                        <%= will_paginate @Lista, :container => false %>
+                      </div>
+                  </td>
+                </tr>
+            </table>
+        </div>
+    </body>
+	<script>
+	
+	function nueva_peli() {
+		document.getElementById("form_id").action = "\\alta";
+		document.getElementById("form_id").submit();	
+	}
+	
+	function busqueda() {
+		document.getElementById("form_id").action = "\\busca";
+		document.getElementById("form_id").submit();	
+	}
+	
+	function consulta(x) {
+		document.getElementsByName("param0")[0].value = x;
+		document.getElementById("form_id").action = "\\consulta";
+		document.getElementById("form_id").submit();		
+	}
+	</script>
+</html>

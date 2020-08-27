@@ -1,0 +1,361 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+     <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+     <style>
+         body
+         {
+             font-family: Comic Sans MS;
+             background-color:white;
+             font-size: 14px;
+         }
+
+         td.peliid
+         {
+             font-size: 32px;
+         }
+
+         .consulta
+         {
+             border:none;
+             background-color:#E0E0E0 ;
+             font-size: 14px;
+         }
+
+         .entrada
+         {
+             border:none;
+             font-size: 14px;
+         }
+
+         a.msgerr
+         {
+             color: #ff0000;
+             font-weight:bold;
+         }
+
+         div.general {
+             margin: 0px;
+             padding: 0;
+             border-collapse: collapse;
+             width: 530px;
+             height: 165px;
+             overflow: hidden;
+             border: 1px solid black;
+         }
+
+         table.tab-titulo {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             color: White;
+             width: 530px;
+             height: 20px;
+             text-align: left;
+             background-color: Grey;
+         }
+
+         .detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+         }
+
+         div.gral-detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             width: 530px;
+             height: 145px;
+             overflow: auto;
+         }
+
+         table.tab-detalle {
+             margin: 0;
+             padding: 0;
+             border-collapse: collapse;
+             width: 510px;
+         }
+		 
+		#tabla-linda {
+			font-family: Comic Sans MS;
+			border-collapse: collapse;
+			width: 100%;
+		}
+
+		#tabla-linda td, #tabla-linda th {
+		  border: 1px solid #ddd;
+		  padding: 4px;
+		}
+
+		#tabla-linda tr:nth-child(even){background-color: #f2f2f2;}
+
+		#tabla-linda tr:hover {background-color: #ddd;}
+
+		#tabla-linda th {
+		  padding-top: 6px;
+		  padding-bottom: 6px;
+		  text-align: left;
+		  background-color: #666666;
+		  color: white;
+		  position: sticky;
+		  top: 0; /* Don't forget this, required for the stickiness */
+		}
+
+
+     </style>
+     <title>Peliculas (<%= settings.ambiente %>)</title>
+   </head>
+   <body>
+      <table style="text-align: left;"  border="0" cellpadding="2" cellspacing="2">
+			<tr>
+                <td style=" width:<%=(session[:iwidth] * 0.15).to_i%>px; min-width:<%=(session[:iwidth] * 0.15).to_i%>px; vertical-align: top;">    
+					<img style="align: left" src="/images/Video.gif" >
+				</td>
+			
+               <td style=" width:<%=(session[:iwidth] * 0.6).to_i%>px; min-width:<%=(session[:iwidth] * 0.6).to_i%>px; vertical-align: top;">
+                     <table style="text-align: left;"  border="0">
+                           <tr>
+                              <td colspan="1" rowspan="15" style="width: 33%; 
+							                                      vertical-align: top;">
+                                <input style="border: 3px solid #000000;" name="Xposter" alt="no poster"1
+								       src = ""
+                                       value="" height="<%=((session[:xwidth]*1.8).to_i * 1.56).to_i%>" type="image" width="<%=(session[:xwidth] * 1.8).to_i%>" >
+                              </td>
+					       </tr>
+                           <tr>
+                              <td style="width: 24%; height: 15px; text-align: right;font-size: 14px;"><b>Título:&nbsp;</b></td>
+                              <td style="width: 43%;"> <input class="entrada"  maxlength="100" size="60" tabindex="1" name="Xtitulo" value=""></td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;font-size: 14px;"><b>Año:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="15" size="60" tabindex="2" name="Xanio" value=""></td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Título original:&nbsp;</b></td>
+                              <td> <input class="entrada"  value="" maxlength="100" size="60" tabindex="3" name="Xoriginal"></td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Dirigida por:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="100" size="60" name="Xdirector" value=""> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Escrita por:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="100" size="60" name="Xwriter" value=""> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Género:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="100" size="60" name="Xgenero" value=""> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>País:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="100" size="60" name="Xnacion" value=""> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Idioma:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="100" size="60" name="Xidioma" value=""> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Sonido:&nbsp;</b></td>
+                              <td> <input class="entrada" maxlength="100" size="60" name="Xsonido" value=""> </td>
+                           </tr>
+                           <tr>
+                              <td style=" height: 15px; text-align: right;"><b>Color:&nbsp;</b></td>
+                              <td>  <input class="entrada" maxlength="100" size="60" name="Xcolor" value=""> </td>
+                           </tr>
+                           <tr>
+                             <td style=" height: 15px; text-align: right;"><b>Formato:&nbsp;</b></td>
+                             <td>
+							   <select class="entrada" name="Xformato" id="Xformato">
+							   </select>
+                             </td>
+                           </tr>
+
+                           <tr>
+                             <td style="height: 15px; text-align: right;"><b>Medio:&nbsp;</b></td>
+                             <td>
+                                   <select class="entrada" name="Xmedia" id="Xmedia">
+                                   </select>
+                             </td>
+                           </tr>
+                           <tr>
+                             <td style="height: 15px; text-align: right;"><b>IMDB Code:&nbsp;</b></td>
+                             <td> <input class="entrada" maxlength="100" size="60" name="Ximdb" value=""></td>
+                           </tr>
+						   <tr>
+                               <td style="height: 15px; text-align: right;"><b>Videoteca ID:&nbsp;</b></td>
+                             <td> <input class="entrada" readonly  maxlength="70" size="60" align="left" name="Xid" value="">
+                             </td>  
+						   </tr>
+                           <tr>
+                             <td style="width: <%=(session[:xwidth] * 1.8).to_i%>px; height: 15px; vertical-align: top"><b>Observacion:</b></td>
+                             <td colspan="2" rowspan="2" style="vertical-align: top;">
+                               <div >
+                                 <div style="width: 95%; height: <%=(session[:iheight] * 0.9).to_i-((session[:xwidth]*1.8).to_i * 1.56).to_i%>px; overflow: auto" >
+                                   <table id="tabla-linda">
+                                     <colgroup>
+                                       <col width="40%"/>
+                                       <col width="60%"/>
+                                     </colgroup>
+                                    <tr >
+                                     <th>Elenco</th>
+									 <th>  </th>
+                                    </tr>
+                                    <tbody >
+                                     </tbody>  
+                                   </table>
+                                 </div>
+                               </div>
+                             </td>
+						   </tr>
+						   <tr>
+                               <td style="vertical-align: top" >
+								<textarea class="entrada" style="width: 95%; height: 100%; resize: none; border: 1px solid #000000;"  rows="8" name="Xobserv"></textarea> 
+							  
+                             </td>
+                           </tr>
+                     </table>
+                    <div style="text-align: right;width: 765px;height: 20px;">
+                      <a class="msgerr" name="error_msg" style="text-align: left; width: 765px;">  </a>
+                    </div>
+			  </td>
+			  <td style="align: left; vertical-align: bottom">
+                    <form method="POST" action="" id="form_id">
+						<div>
+						
+							<a class="boton" onclick="Grabar();" >
+								<img alt="Grabar" src="./images/Grabar.jpg" >
+							</a> 
+							<% if JSON.parse(film)["id"] != 0 %>
+								<a class="boton" onclick="Eliminar();" >
+									<img alt="Eliminar" src="./images/Eliminar.jpg" >
+								</a> 
+							<% end %>
+							<a class="boton" onclick="window.history.go(<%=lavuelta%>);" >
+								<img alt="Volver" src="./images/Volver.jpg" >
+							</a> 	 
+						</div>
+					   <input name="param0" value="" type="hidden" />
+					</form>
+               </td>
+            </tr>
+      </table>
+      <br>
+	  <script>
+			var param = <%=film%>;		
+			var param1 = <%=formas%>;
+			var param2 = <%=medios%>;
+			document.getElementsByName("Xtitulo")[0].value = param["titulo"];
+			document.getElementsByName("Xanio")[0].value = param["anio"];
+			document.getElementsByName("Xoriginal")[0].value = param["titulo_original"];
+			document.getElementsByName("Ximdb")[0].value = param["imdb_code"];
+			document.getElementsByName("Xposter")[0].src = param["poster"];
+			if (param["id"] != 0) {
+				document.getElementsByName("Xid")[0].value = '#'+param["id"].toString().padStart(4, '0');
+			}
+			document.getElementsByName("Xobserv")[0].value = param["comment"]
+			
+			document.getElementsByName("Xdirector")[0].value = junta(param["director"]);
+			document.getElementsByName("Xwriter")[0].value = junta(param["writer"]);
+			document.getElementsByName("Xgenero")[0].value = junta(param["genero"]);
+			document.getElementsByName("Xnacion")[0].value = junta(param["nacion"]);
+			document.getElementsByName("Xidioma")[0].value = junta(param["idioma"]);
+			document.getElementsByName("Xsonido")[0].value = junta(param["sonido"]);
+			document.getElementsByName("Xcolor")[0].value = junta(param["color"]);
+
+			var tableRef = document.getElementById('tabla-linda').getElementsByTagName('tbody')[0];
+			for (i = 0; i < param["elenco"].length; i++) {
+				var newRow   = tableRef.insertRow();
+				// Insert a cell in the row at index 0
+				var newCell0  = newRow.insertCell(0);
+				var newCell1  = newRow.insertCell(1);
+
+				// Append a text node to the cell
+				var newText0  = document.createTextNode(param["elenco"][i]["nombre"]);
+				var newText1  = document.createTextNode(param["elenco"][i]["personaje"]);
+				newCell0.appendChild(newText0);
+				newCell1.appendChild(newText1);
+			}	
+
+			for (i=0; i < param1.length; i++) {
+				var opt = document.createElement("option");
+				opt.value = param1[i][0];
+				opt.innerHTML = param1[i][1];
+				Xformato.appendChild(opt);
+			}
+			document.getElementById("Xformato").value = param["formato"];
+
+			for (i=0; i < param2.length; i++) {
+				var opt = document.createElement("option");
+				opt.value = param2[i][0];
+				opt.innerHTML = param2[i][1];
+				Xmedia.appendChild(opt);
+			}
+			document.getElementById("Xmedia").value = param["media"];
+
+			function Grabar() {
+				var param = <%=film%>;		
+
+				//console.log(param);
+				
+				if (document.getElementsByName("Xformato")[0].value == "N/A" || document.getElementsByName("Xmedia")[0].value == "N/A") {
+					document.getElementsByName("error_msg")[0].innerHTML = "Falta completar campos";
+				} else {
+					param["titulo"] = document.getElementsByName("Xtitulo")[0].value;
+					param["anio"] = document.getElementsByName("Xanio")[0].value;
+					param["titulo_original"] = document.getElementsByName("Xoriginal")[0].value;
+					param["imdb_code"] = document.getElementsByName("Ximdb")[0].value;
+					param["comment"] = document.getElementsByName("Xobserv")[0].value
+					param["formato"] = document.getElementById("Xformato").value;
+					param["media"] = document.getElementById("Xmedia").value;
+					
+					param["director"] = lista(document.getElementsByName("Xdirector")[0].value);
+					param["writer"] = lista(document.getElementsByName("Xwriter")[0].value);
+					param["genero"] = lista(document.getElementsByName("Xgenero")[0].value);
+					param["nacion"] = lista(document.getElementsByName("Xnacion")[0].value);
+					param["idioma"] = lista(document.getElementsByName("Xidioma")[0].value);
+					param["sonido"] = lista(document.getElementsByName("Xsonido")[0].value);
+					param["color"] = lista(document.getElementsByName("Xcolor")[0].value);
+
+					document.getElementsByName("param0")[0].value = JSON.stringify(param);
+					document.getElementById("form_id").action = "\\grabaPeli";
+					document.getElementById("form_id").submit();
+				}
+			}
+			
+			function Eliminar() {
+				var param = <%=film%>;		
+
+				//console.log(param);
+				var resp = confirm("Confirma la baja de " + param["titulo"]);
+				if (resp) {
+					document.getElementsByName("param0")[0].value = param["id"];
+					document.getElementById("form_id").action = "\\borraPeli";
+					document.getElementById("form_id").submit();
+				}
+			}
+			
+			function junta(lista) {
+				ret = '';	
+				for (i = 0; i < lista.length; i++) {
+					ret = ret + ' | ' + lista[i]["nombre"];
+				}
+				return ret.substring(3);
+			}
+
+			function lista(junta) {
+				var aux = junta.split("|")
+				var ret = [];
+				for (i=0; i < aux.length; i++) {
+					var h = {}
+					h["nombre"] = aux[i].trim()
+					console.log(h);
+					ret.push(h);
+					console.log(ret);
+				}
+				return ret
+			}
+
+	  </script>
+   </body>
+</html>

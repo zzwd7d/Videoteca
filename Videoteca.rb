@@ -2,12 +2,12 @@ require "sinatra"
 require 'sinatra/activerecord'
 require "./constantes"
 require "./IMDB3"
-require "./varios"
 require "open-uri"
 require "will_paginate"
 require "will_paginate/active_record"
 require 'openssl'
 require 'yaml'
+require 'json'
 
 OpenSSL::SSL::VERIFY_PEER = OpenSSL::SSL::VERIFY_NONE
 
@@ -44,8 +44,6 @@ require './models/nacion'
 require './models/sonido'
 require './models/writer'
 
-require "./transf_peli"
-
 ActiveRecord::Base.establish_connection(
   :adapter  => settings.dbadapter,
   :host     => settings.dbhost, 
@@ -56,150 +54,138 @@ ActiveRecord::Base.establish_connection(
 )
 
 get '/' do
-  redirect "/home"
+  erb :vid01
 end
 
-get '/home' do
-  session[:nro_page] =  params[:page]
-  session[:nro_page] = "1" if session[:nro_page].nil?
+post '/dimensiones' do
+	session[:iwidth] = params[:iwidth].to_i
+	session[:iheight] = params[:iheight].to_i
+	
+	xheader = 80 + 25  
 
-  session[:fdirector] = nil
-  session[:felenco] = nil
-  session[:fgenero] = nil
-  session[:fdecada] = '0000~9999'
-  session[:fcomment] = nil
-  @Lista=nil
+	session[:xcols] =  8 
+	session[:xfils] = 2 
+	
+	session[:xwidth] = (session[:iwidth] * 0.9).to_i / session[:xcols]
+	session[:xheight] = (session[:xwidth] * 1.56).to_i
+	
+	session[:pelxpag] = session[:xcols] * session[:xfils]
+	
+	session[:nro_page] =  params[:page]
+	session[:nro_page] = "1"  if session[:nro_page].nil?
 
-  redirect "/armaListado?page="+ session[:nro_page]
+	session[:fdirector] = nil
+	session[:felenco] = nil
+	session[:fgenero] = nil
+	session[:fdecada] = '0000~9999'
+
+	redirect "/armaListado?page="+ session[:nro_page]
 end
 
 get '/armaListado' do
-  session[:nro_page] =  if session[:nro_page].nil? then "1" else params[:page] end
+	session[:nro_page] =  if session[:nro_page].nil? then "1" else params[:page] end
 
-  @Directores = Director.resumen_combo(settings.pelisXdirec)
-  @Elencos = Elenco.resumen_combo(settings.pelisXactor)
-  @Generos = Genero.resumen_combo
+	@Directores = Director.resumen_combo(settings.pelisXdirec)
+	@Elencos = Elenco.resumen_combo(settings.pelisXactor)
+	@Generos = Genero.resumen_combo
 
-  director = if session[:fdirector] == 'all' then nil else session[:fdirector] end
-  elenco =  if session[:felenco] == 'all' then nil else elenco = session[:felenco] end
-  genero =  if session[:fgenero] == 'all' then nil else genero = session[:fgenero] end
-  fechas = session[:fdecada].split('~')
+	director = if session[:fdirector] == 'all' then nil else session[:fdirector] end
+	elenco =  if session[:felenco] == 'all' then nil else elenco = session[:felenco] end
+	genero =  if session[:fgenero] == 'all' then nil else genero = session[:fgenero] end
+	fechas = session[:fdecada].split('~')
 
-  @Lista = Pelicula.por_director(director).por_elenco(elenco).por_genero(genero)
-                   .por_decada(fechas[0],fechas[1]).con_comentarios(session[:fcomment])
-                   .paginate(:page => session[:nro_page],:per_page => PELXPAG)
+	@Lista = Pelicula.por_director(director).por_elenco(elenco).por_genero(genero)
+				   .por_decada(fechas[0],fechas[1])
+				   .paginate(:page => session[:nro_page],:per_page => session[:pelxpag])
 
-  erb :ListadoPeli
+	erb :vid02
 end
 
-get '/consulta/:ref' do
-  @Modo = "CONSULTA"
-  arma_consulta(params[:ref])
+post '/consulta' do
+	arma_consulta(params["param0"],-1)
 end
-  
-get '/modifica/:ref' do
-  @Modo = "MODIFICA"
-  arma_consulta(params[:ref])
-end
-  
-get '/elimina/:ref' do
-  @Modo = "ELIMINA"
-  arma_consulta(params[:ref])
-end
-  
-def arma_consulta(el_id)
-  @Id = el_id
-#  @Modo = "CONSULTA"
-  session[:modo] = @Modo
-  session[:pelicula_id] = el_id
-  @movies_list = []
-  @error_msg = ""
-  @peli = Pelicula.busca_por_id(@Id)
-  erb :AltaPEli
+    
+def arma_consulta(el_id, vuelta)
+	session[:pelicula_id] = el_id
+
+	peli = Pelicula.busca_por_id_json(el_id)
+
+	erb :vid04 , locals: {film: peli.to_json, formas: FORMATOS, medios: MEDIAS, lavuelta: vuelta}
 end
 
 post '/alta' do
-  if params[:botonera] == "Buscar"
+	erb :vid03
+end
+
+post '/busca' do
     session[:fdirector] = params[:Xdirectores]
     session[:felenco] = params[:Xelencos]
     session[:fgenero] = params[:Xgeneros]
     session[:fdecada] = params[:Xdecadas]
-    session[:fcomment] = params[:Xcomments]
-    @Lista=nil
     redirect "/armaListado?page=1"
-  end
-  @Modo = "ALTA"
-  session[:modo] = @Modo
-  @movies_list = []
-  @peli = peliDummy
-  @Key = ""
-  @error_msg = ""
-  erb :AltaPEli
 end
 
-post '/muestraLista'  do
-  @Modo = session[:modo]
-  @Key = params[:KeyName]
-  session[:KeyName] = @Key
-  if @Key == ""
-    @movies_list = []
-  else
-    imdbx = IMDB2.new('list',@Key)
-    @movies_list = imdbx.movies
-  end
-  @error_msg = ""
-  @peli = peliDummy
-  erb :AltaPEli
+post '/generaBusquedaName'  do
+	session[:KeyName] = params[:KeyName]
+	if session[:KeyName] == ""
+		movies_list = []
+	else
+		imdbx = IMDB2.new('list',session[:KeyName])
+		movies_list = imdbx.movies
+	end
+	movies_list.to_json
 end
+
+post '/generaBusquedaCode'  do
+	session[:imdbCode] = params[:imdbCode]
+	if session[:imdbCode] == ""
+		movies_list = []
+	else
+		imdbx = IMDB2.new('movie',session[:imdbCode])
+		movies_list = []
+		una_movie = []
+		movie = JSON.parse(imdbx.json_movie())
+		una_movie << movie["spanish title"]+' ('+movie["year"]+')'
+		una_movie << movie["imdbcode"]
+		movies_list << una_movie
+	end
+	movies_list.to_json
+end
+
 
 post '/muestraPeli' do
-  @Modo = session[:modo]
-  if params[:imdbCode] == ""
-	  @movie_code = params[:MovieCode]
+	if not params[:param0].nil?
+		existe = Pelicula.por_imdb_code(params[:param0])
+		if existe.nil?
+			imdbx = IMDB2.new('movie',params[:param0])
+			peli = imdbx.json_movie()  
+			erb :vid04, locals: {film: peli.to_json, formas: FORMATOS, medios: MEDIAS, lavuelta: -1}
+		else
+			arma_consulta(existe.id,-1)
+		end 
 	else
-	  @movie_code = params[:imdbCode]	
-  end
- # @movie_code = params[:MovieCode]
-  session[:movie_code] = @movie_code
-  if @movie_code != ""
-    existe = Pelicula.por_imdb_code(@movie_code)
-	if existe.nil?
-		imdbx = IMDB2.new('movie',@movie_code)
-		@peli = imdb2Peli(imdbx)
-	else
-		arma_consulta(existe.id)
-	end 
-  end
-  @Key = session[:KeyName]
-  @movies_list = separa2(params[:Xmovies])
-  @error_msg = ""
-  erb :AltaPEli
-end
-
-post '/guardarPeli' do
-  @Modo = session[:modo]
-  if params[:botonera] == "Volver"
-    redirect "/armaListado?page="+ session[:nro_page]
-  end
-  case params[:botonera] 
-	when "Guardar Película","Modificar Película"
-		@error_msg = ""
-		@peli = post2Peli(@Modo)
-		if es_completa
-			begin
-			  @peli.save
-			rescue => e
-			  @error_msg = e.message
-			end
-		end
-		@Key = session[:KeyName]
-		@movies_list = separa2(params[:Xmovies2])
-		@movie_code = session[:movie_code]
-		@Modo = "CONSULTA"
-		erb :AltaPEli
-	when "Eliminar Película"
-		Pelicula.where(id: session[:pelicula_id].to_i).destroy_all
-		redirect "/armaListado?page="+ session[:nro_page]
+		redirect '/alta',307
 	end
 end
 
+post '/grabaPeli' do
+	peli = JSON.parse(params[:param0]);
+	peli = Pelicula.graba_pelicula(peli)
+	arma_consulta(peli["id"].to_i, -2)
+end
+
+post '/borraPeli' do
+	Pelicula.where(id: params[:param0]).destroy_all
+	redirect "/armaListado?page="+ session[:nro_page]
+end
+
+def tdcolor( n )
+  salida = case n.divmod(5)[1]
+                when 0 then "color1"
+                when 1 then "color2"
+                when 2 then "color3"
+                when 3 then "color4"
+                when 4 then "color5"
+           end
+  salida
+end
