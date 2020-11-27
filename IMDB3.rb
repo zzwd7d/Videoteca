@@ -36,7 +36,7 @@ class IMDB2
                                                          refers << node['href'].split('/')[2]
                                                        end
     for i in 0..(titulos.count - 1)
-      if not(titulos[i].include? "TV Episode")
+      if not(titulos[i].include? "TV Episode") and not(titulos[i].include? "Video Game")
         aux=[]
         aux << titulos[i]
         aux << refers[i]
@@ -275,34 +275,34 @@ class IMDB2
     @poster
   end
   
-  def json_movie_old (imdb_obj)
+  def json_movie_test ()
     res = Hash.new
     
-    if not(imdb_obj.es_serie)
-      res["spanish title"] = imdb_obj.title2[0]
-      res["original title"]  = imdb_obj.title2[1]
-      res["year"] = imdb_obj.anio[0]
-      res["imdbcode"] = imdb_obj.title2[2]
-      res["writer"] = imdb_obj.writer
-      res["cast"] = imdb_obj.cast
+    if not(self.es_serie)
+      res["spanish title"] = self.title2[0]
+      res["original title"]  = self.title2[1]
+      res["year"] = self.anio[0]
+      res["imdbcode"] = self.title2[2]
+      res["writer"] = self.writer
+      res["cast"] = self.cast
     else
-      res["spanish title"] = imdb_obj.title_serie[0]
-      res["original title"] = imdb_obj.title_serie[1]
-      res["year"] = imdb_obj.anio_serie[0]
-      res["imdbcode"] = imdb_obj.title_serie[2]
-      res["writer"] =  imdb_obj.creator
-      res["cast"] = imdb_obj.cast_serie
+      res["spanish title"] = self.title_serie[0]
+      res["original title"] = self.title_serie[1]
+      res["year"] = self.anio_serie[0]
+      res["imdbcode"] = self.title_serie[2]
+      res["writer"] =  self.creator
+      res["cast"] = self.cast_serie
     end
   
-	  res["director"] = imdb_obj.director
-	  res["genre"] = imdb_obj.genre
-	  res["country"] = imdb_obj.country
-	  res["language"] = imdb_obj.language
-	  res["sound"] = imdb_obj.sound
-	  res["color"] = imdb_obj.color
-	  res["poster"] = imdb_obj.poster[0]
+	  res["director"] = self.director
+	  res["genre"] = self.genre
+	  res["country"] = self.country
+	  res["language"] = self.language
+	  res["sound"] = self.sound
+	  res["color"] = self.color
+	  res["poster"] = self.poster[0]
 
-	  res.to_json	
+	  res	
 	
   end
   

@@ -115,18 +115,27 @@
                     <% end %>
 
             </table>
-            <table style="height: 25px">
-               <tr>
-                  <td>
-                      <div class="digg_pagination" style=" text-align: right;  ">
-                        <%= will_paginate @Lista, :container => false %>
-                      </div>
-                  </td>
-                </tr>
-            </table>
+			<form method="POST" id="form_id2" >  
+				<table style="height: 25px">
+				   <tr>
+					  <td>
+						  <div class="digg_pagination" style=" text-align: right;  ">
+							<%= get2post(will_paginate @Lista, :container => false) %>
+						  </div>
+					  </td>
+					</tr>
+				</table>
+				<input name="param1" value="" type="hidden" />
+			</form>  
         </div>
     </body>
 	<script>
+	
+	function Redireccion(p) {
+		document.getElementsByName("param1")[0].value = p;
+		document.getElementById("form_id2").action = "\\Listados";
+		document.getElementById("form_id2").submit();				
+	}
 	
 	function nueva_peli() {
 		document.getElementById("form_id").action = "\\alta";

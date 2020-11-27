@@ -5,7 +5,7 @@ servicio:
     
 base:
   adapter: "mysql2"
-  host: "192.168.0.101"
+  host: "192.168.1.101"
   port: "3306"
   username: "hacetodo"
   password: "hacetodo"
@@ -15,3 +15,7 @@ params:
     pelisXdirec: 2
     pelisXactor: 2
     
+publicar:
+    origen: 'C:/Users/Admin/Fuentes/Origen'
+    destino: 'C:/Users/Admin/Fuentes/Destino'
+

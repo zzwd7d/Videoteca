@@ -221,12 +221,17 @@
 			  </td>
 			  <td style="align: left; vertical-align: bottom">
                     <form method="POST" action="" id="form_id">
-						<div>
+						<div style="width: 210px">
 						
 							<a class="boton" onclick="Grabar();" >
 								<img alt="Grabar" src="./images/Grabar.jpg" >
 							</a> 
 							<% if JSON.parse(film)["id"] != 0 %>
+								<% if JSON.parse(film)["media"] == 'DSK01' %>
+									<a class="boton" onclick="Publicar();" >
+										<img alt="Publicar" src="./images/Publicar.jpg" >
+									</a> 
+								<% end %>
 								<a class="boton" onclick="Eliminar();" >
 									<img alt="Eliminar" src="./images/Eliminar.jpg" >
 								</a> 
@@ -321,6 +326,31 @@
 					document.getElementById("form_id").action = "\\grabaPeli";
 					document.getElementById("form_id").submit();
 				}
+			}
+			
+			function Publicar() {
+				var url;
+				var parametros;
+
+				url = '/publicaPelicula';
+				parametros = 'id='+document.getElementsByName("Xid")[0].value;
+				
+				var xmlhttp;
+				if (window.XMLHttpRequest){
+					// code for IE7+, Firefox, Chrome, Opera, Safari
+					xmlhttp=new XMLHttpRequest();
+				} else {
+					// code for IE6, IE5
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+
+				xmlhttp.open("POST",url,true);
+				xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+				xmlhttp.send(parametros);
+				xmlhttp.onreadystatechange=function(){
+				}	 
+				alert("Película publicada");
+
 			}
 			
 			function Eliminar() {

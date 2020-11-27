@@ -28,7 +28,10 @@ set :dbusername, @config["base"]["username"]
 set :dbpassword, @config["base"]["password"]
 set :dbase, @config["base"]["dbname"]
 
-p "ARRANCA #{@config['servicio']['ambiente']}"
+set :origen, @config["publicar"]["origen"]
+set :destino, @config["publicar"]["destino"]
+
+p "ARRANCA #{@config['servicio']['ambiente']} - Modo #{Sinatra::Application.environment}"
 
 configure do
   Version = Sinatra::VERSION
@@ -79,12 +82,16 @@ post '/dimensiones' do
 	session[:fgenero] = nil
 	session[:fdecada] = '0000~9999'
 
-	redirect "/armaListado?page="+ session[:nro_page]
+	session[:nro_page] =  "1" 
+	armaListado()
 end
 
-get '/armaListado' do
-	session[:nro_page] =  if session[:nro_page].nil? then "1" else params[:page] end
-
+post '/Listados' do
+	session[:nro_page] =  if session[:nro_page].nil? then "1" else params[:param1] end
+	armaListado();
+end
+	
+def armaListado 
 	@Directores = Director.resumen_combo(settings.pelisXdirec)
 	@Elencos = Elenco.resumen_combo(settings.pelisXactor)
 	@Generos = Genero.resumen_combo
@@ -122,7 +129,9 @@ post '/busca' do
     session[:felenco] = params[:Xelencos]
     session[:fgenero] = params[:Xgeneros]
     session[:fdecada] = params[:Xdecadas]
-    redirect "/armaListado?page=1"
+
+	session[:nro_page] =  nil 
+    armaListado()
 end
 
 post '/generaBusquedaName'  do
@@ -176,7 +185,26 @@ end
 
 post '/borraPeli' do
 	Pelicula.where(id: params[:param0]).destroy_all
-	redirect "/armaListado?page="+ session[:nro_page]
+	armaListado()
+end
+
+post '/publicaPelicula' do
+	filenames = Dir.glob(settings.origen+'/'+params[:id]+'*')	
+	dir_nom =  filenames[0].split('/')[-1]	
+	FileUtils.cp_r settings.origen+"/"+dir_nom, settings.destino
+	'Ok'
+end
+
+def get2post(ht)
+	@doc = Nokogiri::HTML(ht)
+    @doc.xpath('//a').each  do |node|
+		xnew = '#" title="Page ?" onclick="Redireccion(?);return false;"'
+		xref = node['href'] + '"'
+		xpage=xref[xref.index('=')+1 ..][0..-2]
+		xnew = xnew.gsub('?',xpage)
+		ht = ht.gsub(xref,xnew)
+    end
+	ht	
 end
 
 def tdcolor( n )
