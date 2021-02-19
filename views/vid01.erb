@@ -2,7 +2,7 @@
 <html>
 <head>
     <meta charset="UTF-8" />
-    <title>Peliculas (<%= settings.ambiente %>)</title>
+        <title>Peliculas <% if settings.ambiente != "Produccion" %> (<%= settings.ambiente %>) <% end %></title>
 
 </head>
 

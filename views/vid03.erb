@@ -115,7 +115,7 @@
 		}
 
      </style>
-     <title>Peliculas (<%= settings.ambiente %>)</title>
+     <title>Peliculas <% if settings.ambiente != "Produccion" %> (<%= settings.ambiente %>) <% end %></title>
    </head>
 	<body>
 		<table style="height: 80px" border="0" >
@@ -136,7 +136,7 @@
 					<input class="combos" type="text" value="" name="KeyName" id="KeyName" style="width: 220px; align: rigth" />
 				</td>
 				<td rowspan="2">
-					<a onClick="poneLista()" >
+					<a id= "Buscar_buttom" onClick="poneLista()" >
 						<img src="./images/Buscar.jpg" />
 					</a>  
 				</td>
@@ -167,6 +167,16 @@
 		</table>
 
       <br>
+	  
+	<script>
+		var input = document.getElementById("KeyName");
+		input.addEventListener("keyup", function(event) {
+		  if (event.keyCode === 13) {
+		   event.preventDefault();
+		   document.getElementById("Buscar_buttom").click();
+		  }
+		});
+	</script>	  
 	  
 	  <script>
 		function poneLista() {

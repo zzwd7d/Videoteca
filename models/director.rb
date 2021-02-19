@@ -3,6 +3,6 @@ class Director < ActiveRecord::Base
 
   def self.resumen_combo(limite)
     aux = Director.all.group(:nombre).count.to_a
-    aux.delete_if {|x| x[1] < limite}
+    aux.delete_if {|x| x[1] < limite or x[0]== ""}
   end
 end

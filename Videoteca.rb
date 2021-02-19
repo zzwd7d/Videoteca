@@ -200,7 +200,7 @@ def get2post(ht)
     @doc.xpath('//a').each  do |node|
 		xnew = '#" title="Page ?" onclick="Redireccion(?);return false;"'
 		xref = node['href'] + '"'
-		xpage=xref[xref.index('=')+1 ..][0..-2]
+		xpage=xref[xref.index('=')+1..-1][0..-2]
 		xnew = xnew.gsub('?',xpage)
 		ht = ht.gsub(xref,xnew)
     end
