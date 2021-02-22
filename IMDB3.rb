@@ -50,7 +50,7 @@ class IMDB2
 	  es_serie = false
 	  serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
 	  aux = serie_text.split('|')
-	  if aux[-1].strip.include? "TV Serie"
+	  if aux[-1].strip.include? "TV" and  aux[-1].strip.include? "Serie"
 		  es_serie = true
 	  end 
   	es_serie
