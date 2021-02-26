@@ -153,9 +153,9 @@ post '/generaBusquedaCode'  do
 		imdbx = IMDB2.new('movie',session[:imdbCode])
 		movies_list = []
 		una_movie = []
-		movie = JSON.parse(imdbx.json_movie())
-		una_movie << movie["spanish title"]+' ('+movie["year"]+')'
-		una_movie << movie["imdbcode"]
+		movie = imdbx.json_movie()
+		una_movie << movie["titulo"]+' ('+movie["anio"]+')'
+		una_movie << movie["imdb_code"]
 		movies_list << una_movie
 	end
 	movies_list.to_json
@@ -175,6 +175,11 @@ post '/muestraPeli' do
 	else
 		redirect '/alta',307
 	end
+end
+
+post '/muestraPeliEnBlanco' do
+	peli = Pelicula.pelicula_vacia() 
+	erb :vid04, locals: {film: peli.to_json, formas: FORMATOS, medios: MEDIAS, lavuelta: -1}
 end
 
 post '/grabaPeli' do

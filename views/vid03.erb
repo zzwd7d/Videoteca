@@ -135,7 +135,7 @@
 				<td>
 					<input class="combos" type="text" value="" name="KeyName" id="KeyName" style="width: 220px; align: rigth" />
 				</td>
-				<td rowspan="2">
+				<td>
 					<a id= "Buscar_buttom" onClick="poneLista()" >
 						<img src="./images/Buscar.jpg" />
 					</a>  
@@ -145,6 +145,13 @@
 				<td class="combos" >IMDB Code: </td>
 				<td>
 					<input class="combos" type="text" value="" name="imdbCode" id="imdbCode" style="width: 220px" />
+				</td>
+				<td >
+					<form method="POST" id="form_id2" action="/muestraPeliEnBlanco" >
+                    </form>
+					<a id= "Buscar_buttom" onClick="peliEnBlanco()" >
+						<img src="./images/carga_manual.jpg" />
+					</a>  
 				</td>
 			</tr>
 		</table>
@@ -221,6 +228,10 @@
 		function elegiUno() {
 			document.getElementsByName("param0")[0].value = document.getElementById("MovieList").value;
 			document.getElementById("form_id").submit();
+		}
+		
+		function peliEnBlanco() {
+			document.getElementById("form_id2").submit();
 		}
 		
 	  </script>

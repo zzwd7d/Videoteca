@@ -79,7 +79,14 @@ class Pelicula < ActiveRecord::Base
 	  k.titulo = m["titulo"]
 	  k.titulo_original = m["titulo_original"]
 	  k.anio = m["anio"]
-	  k.imdb_code = m["imdb_code"]
+	  if m["imdb_code"] == 'qq'
+		nuevo_qq  = self.next_qq()
+		k.imdb_code = nuevo_qq
+		FileUtils.copy_file( "./public/auxiliar/noposter.jpg","./public/auxiliar/" + nuevo_qq + ".jpg")
+		m["poster"] = "/auxiliar/" + nuevo_qq + ".jpg"
+	  else
+		k.imdb_code = m["imdb_code"]
+	  end
 	  k.formato = m["formato"]
 	  k.media = m["media"]
 	  k.comment = m["comment"]
@@ -93,14 +100,8 @@ class Pelicula < ActiveRecord::Base
 		k.idiomas.destroy_all
 		k.sonidos.destroy_all
 		k.colors.destroy_all
+		k.elencos.destroy_all
 	  else
-		n = 1
-		m["elenco"].each do |cada|
-			k.elencos.new({:nombre => cada["nombre"],
-						   :personaje => cada["personaje"],
-						   :orden => n})
-			n = n + 1
-		end
 		FileUtils.mv("./public" + m["poster"], "./public/posters")
 	  end	
 		
@@ -131,6 +132,14 @@ class Pelicula < ActiveRecord::Base
 	  m["color"].each  do |cada|
 		k.colors.new({:nombre => cada["nombre"]})
 	  end
+	  
+	  n = 1
+	  m["elenco"].each do |cada|
+		  k.elencos.new({:nombre => cada["nombre"],
+			  		     :personaje => cada["personaje"],
+					     :orden => n})
+		  n = n + 1
+	  end
 
 	  k.save
 
@@ -138,6 +147,49 @@ class Pelicula < ActiveRecord::Base
 
 	  m
 
+	end
+
+	def self.pelicula_vacia()
+	  m = Hash.new
+ 
+	  m["id"] = 0
+	  m["titulo"] = ''
+	  m["titulo_original"] = ''
+	  m["anio"] = ''
+	  m["imdb_code"] = 'qq'
+	  m["formato"] = ''
+	  m["media"] = ''
+	  m["comment"] = ''
+	  m["poster"] = "/auxiliar/noposter.jpg"
+	  		
+	  m["director"] = []
+
+	  m["writer"] = []
+
+	  m["genero"] = []
+
+	  m["nacion"] = []
+
+	  m["idioma"] = []
+
+	  m["sonido"] = []
+	  
+	  m["color"] = []
+	  
+	  m["elenco"] = []
+	  
+	  m
+
+	end
+	
+	def self.next_qq()
+		max = Pelicula.select("imdb_code").where("imdb_code like 'qq%'").order(imdb_code: :desc).first
+		if max.imdb_code.nil?
+			n = 1
+		else 
+			n = max.imdb_code[2..-1].to_i + 1
+		end
+		"qq" + n.to_s.rjust(7,'0')
 	end
 
 
