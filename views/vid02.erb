@@ -16,7 +16,7 @@
 
 <!--						<td style="width: <%=((session[:iwidth]-110) * 0.35).to_i%>px">		-->
 						<td>
-							<select class="combos"  name="Xdirectores">
+							<select class="combos"  name="Xdirectores" onchange="busqueda();">
 								<option value="all">Todos los directores</option>
 								<% @Directores.each do |name| %>
 									<option value ="<%=name[0] %>"
@@ -28,7 +28,7 @@
 							</select>
 						</td>
 						<td>
-							<select class="combos"  name="Xelencos">
+							<select class="combos"  name="Xelencos" onchange="busqueda();">
 								<option value="all">Todos los actores</option>
 								<% @Elencos.each do |name| %>
 									<option value ="<%=name[0] %>"
@@ -39,15 +39,8 @@
 								<% end %>
 							</select>
 						</td>
-						<td align="center">
-							<a onclick="nueva_peli();">  
-								<img src="./images/Nueva_pelicula.jpg" />
-							</a>  
-						</td>
-					</tr>
-					<tr>
 						<td>
-							<select class="combos"  name="Xgeneros">
+							<select class="combos"  name="Xgeneros" onchange="busqueda();">
 								<option value="all">Todos los generos</option>
 								<% @Generos.each do |name| %>
 									<option value ="<%=name[0] %>"
@@ -59,7 +52,7 @@
 							</select>
 						</td>
 						<td>
-							<select class="combos"  name="Xdecadas">
+							<select class="combos"  name="Xdecadas" onchange="busqueda();">
 								<option value="0000~9999">Todas las decadas</option>
 								<% DECADAS.each do |name| %>
 									<option value ="<%=name[0] %>"
@@ -70,14 +63,50 @@
 								<% end %>
 							</select>
 						</td>
+						<td>
+							<select class="combos"  name="Xcolecciones" onchange="busqueda();">
+								<option value="all">Todas las colecciones</option>
+								<% COLECCIONES.each do |name| %>
+									<option value ="<%=name[0] %>"
+									<% if name[0] == session[:fcoleccion] %>
+										selected
+									<% end %>
+									><%= name[1] %> </option>
+								<% end %>
+							</select>
+						</td>
+						
+						
 						<td align="center">
-							<a class="boton" onclick="busqueda();" >
-								<img alt="Buscar" src="./images/Buscar.jpg" >
-							</a> 
+							<a onclick="nueva_peli();">  
+								<img src="./images/Nueva_pelicula.jpg" />
+							</a>  
+						</td>
+					</tr>
+					<tr>
+						<td  colspan="5" align="center">
+							<a 
+								<% if session[:fabc] == 'all' %>
+									class="combos2" 
+								<% else %>
+									class="combos" 
+								<% end %>
+								onclick="por_inicial('all');" onmouseover="" style="cursor: pointer;">  Todas 	</a>  
+							<% @Iniciales.each do |name| %>
+								<a class="combos" > . </a>
+								<a 
+								<% if session[:fabc] == name.inicial %>
+									class="combos2" 
+								<% else %>
+									class="combos" 
+								<% end %> 	
+								onclick="por_inicial('<%=name.inicial%>');" onmouseover="" style="cursor: pointer;">  <%=name.inicial%> </a>  
+							<% end %>
 						</td>
 					</tr>
 				</table>
 				<input name="param0" value="" type="hidden" />
+				<input name="Xabc" value="" type="hidden" />
 			</form>  
             <% n=0 %>
             <table style="border-collapse:collapse;" >			
@@ -143,6 +172,7 @@
 	}
 	
 	function busqueda() {
+		document.getElementsByName("Xabc")[0].value = "<%=session[:fabc]%>";
 		document.getElementById("form_id").action = "\\busca";
 		document.getElementById("form_id").submit();	
 	}
@@ -151,6 +181,16 @@
 		document.getElementsByName("param0")[0].value = x;
 		document.getElementById("form_id").action = "\\consulta";
 		document.getElementById("form_id").submit();		
+	}
+	
+	function por_inicial(l) {
+		document.getElementsByName("Xabc")[0].value = l;
+		document.getElementById("form_id").action = "\\busca";
+		document.getElementById("form_id").submit();		
+	}
+	
+	function sleep(ms) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 	</script>
 </html>

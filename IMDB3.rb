@@ -244,6 +244,15 @@ class IMDB2
 	  end
     salida
   end
+  
+  def en_coleccion(i_code)
+    r = Coleccion.where(:imdb_code => i_code)
+	salida = []
+	r.each do |cada|
+		salida << cada.coleccion_code
+	end
+	salida
+ end
 
   def cast_serie
     salida = []
@@ -349,6 +358,7 @@ class IMDB2
 		end	
 	end
 	res["poster"] = "/auxiliar/" + res["imdb_code"] + ".jpg"
+	res["colecciones"] = en_coleccion(res["imdb_code"])
 	res["comment"] = ""
 	res["formato"] = "N/A"
 	res["media"] = "N/A"

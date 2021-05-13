@@ -7,6 +7,10 @@ class Pelicula < ActiveRecord::Base
   has_many :writers, :dependent => :delete_all
   has_many :elencos, :dependent => :delete_all
   has_many :sonidos, :dependent => :delete_all
+  
+  def self.resumen_combo()
+    aux = Pelicula.select("substr(titulo,1,1) as inicial").distinct.order(:inicial)
+  end
 
   def self.por_director(a_nombre)
     if a_nombre.nil?
@@ -36,6 +40,23 @@ class Pelicula < ActiveRecord::Base
     end
   end
 
+  def self.por_coleccion(a_coleccion)
+    if a_coleccion.nil?
+      Pelicula.all.order(:titulo)
+    else
+      Pelicula.joins("INNER JOIN colecciones 
+					  ON (colecciones.coleccion_code = '"+a_coleccion+"' AND colecciones.imdb_code = peliculas.imdb_code)" ).all.order(:titulo)
+    end
+  end
+
+ def self.por_inicial(a_abc)
+    if a_abc.nil?
+      Pelicula.all.order(:titulo)
+    else
+      Pelicula.where("titulo like '"+a_abc+"%'").all.order(:titulo)
+    end
+  end
+
   def self.por_decada(a_desde,a_hasta)
      Pelicula.where("anio >= ? and anio <= ?",a_desde,a_hasta).all.order(:titulo)
   end
@@ -52,7 +73,7 @@ class Pelicula < ActiveRecord::Base
   def self.busca_por_id(a_id)
     Pelicula.includes(:colors,:directors,:elencos,:generos,:idiomas,:nacions,:sonidos,:writers).find(a_id)
   end
-
+  
   def self.busca_por_id_json(a_id)
     peli = Pelicula.includes(:colors,:directors,:elencos,:generos,:idiomas,:nacions,:sonidos,:writers).find(a_id)
     res = JSON.parse(peli.to_json)
@@ -65,6 +86,7 @@ class Pelicula < ActiveRecord::Base
 	res["sonido"] = JSON.parse(peli.sonidos.to_json)
 	res["writer"] = JSON.parse(peli.writers.to_json)
 	res["poster"] = "/posters/" + res["imdb_code"] + ".jpg" 
+	res["colecciones"] = en_coleccion(res["imdb_code"])
 	res
   end
 
@@ -180,6 +202,15 @@ class Pelicula < ActiveRecord::Base
 	  
 	  m
 
+	end
+	
+	def self.en_coleccion(i_code)
+		r = Coleccion.where(:imdb_code => i_code)
+		salida = []
+		r.each do |cada|
+			salida << cada.coleccion_code
+		end
+		salida
 	end
 	
 	def self.next_qq()

@@ -46,6 +46,7 @@ require './models/idioma'
 require './models/nacion'
 require './models/sonido'
 require './models/writer'
+require './models/coleccion'
 
 ActiveRecord::Base.establish_connection(
   :adapter  => settings.dbadapter,
@@ -81,13 +82,15 @@ post '/dimensiones' do
 	session[:felenco] = nil
 	session[:fgenero] = nil
 	session[:fdecada] = '0000~9999'
+	session[:fcoleccion] = nil
+	session[:fabc] = 'all'
 
 	session[:nro_page] =  "1" 
 	armaListado()
 end
 
 post '/Listados' do
-	session[:nro_page] =  if session[:nro_page].nil? then "1" else params[:param1] end
+	session[:nro_page] =   params[:param1] 
 	armaListado();
 end
 	
@@ -95,13 +98,16 @@ def armaListado
 	@Directores = Director.resumen_combo(settings.pelisXdirec)
 	@Elencos = Elenco.resumen_combo(settings.pelisXactor)
 	@Generos = Genero.resumen_combo
+	@Iniciales = Pelicula.resumen_combo()
 
 	director = if session[:fdirector] == 'all' then nil else session[:fdirector] end
 	elenco =  if session[:felenco] == 'all' then nil else elenco = session[:felenco] end
 	genero =  if session[:fgenero] == 'all' then nil else genero = session[:fgenero] end
 	fechas = session[:fdecada].split('~')
+	coleccion =  if session[:fcoleccion] == 'all' then nil else  session[:fcoleccion] end
+	abc =  if session[:fabc] == 'all' then nil else  session[:fabc] end
 
-	@Lista = Pelicula.por_director(director).por_elenco(elenco).por_genero(genero)
+	@Lista = Pelicula.por_director(director).por_elenco(elenco).por_genero(genero).por_coleccion(coleccion).por_inicial(abc)
 				   .por_decada(fechas[0],fechas[1])
 				   .paginate(:page => session[:nro_page],:per_page => session[:pelxpag])
 
@@ -129,8 +135,10 @@ post '/busca' do
     session[:felenco] = params[:Xelencos]
     session[:fgenero] = params[:Xgeneros]
     session[:fdecada] = params[:Xdecadas]
+    session[:fcoleccion] = params[:Xcolecciones]
+    session[:fabc] = params[:Xabc]
 
-	session[:nro_page] =  nil 
+	session[:nro_page] = "1" 
     armaListado()
 end
 

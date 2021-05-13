@@ -23,5 +23,9 @@ DECADAS = [["0000~1939","Anterior a 1940"],
            ["2000~2009","Decada 2000"],
            ["2010~9999","Decada 2010"]]
 
+COLECCIONES = [["OMP","Oscar Mejor Película"],
+			   ["OPE","Oscar Película Extranjera"],
+               ["T250","Top 250 IMDB"]]
+
 
 

@@ -249,29 +249,55 @@
                     </div>
 			  </td>
 			  <td style="align: left; vertical-align: bottom">
-                    <form method="POST" action="" id="form_id">
-						<div style="width: 210px">
-						
-							<a class="boton" onclick="Grabar();" >
-								<img alt="Grabar" src="./images/Grabar.jpg" >
-							</a> 
-							<% if JSON.parse(film)["id"] != 0 %>
-								<% if JSON.parse(film)["media"] == 'DSK01' %>
-									<a class="boton" onclick="Publicar();" >
-										<img alt="Publicar" src="./images/Publicar.jpg" >
-									</a> 
-								<% end %>
-								<a class="boton" onclick="Eliminar();" >
-									<img alt="Eliminar" src="./images/Eliminar.jpg" >
-								</a> 
-							<% end %>
-							<a class="boton" onclick="window.history.go(<%=lavuelta%>);" >
-								<img alt="Volver" src="./images/Volver.jpg" >
-							</a> 	 
-						</div>
-					   <input name="param0" value="" type="hidden" />
-					</form>
-               </td>
+					<table>
+
+						<% if JSON.parse(film)["colecciones"].include?('OMP')  %>
+						<tr>
+							<td><img style="align: left" src="/images/OMP.jpg" ></td>
+						</tr>
+						<% end %>
+
+						<% if JSON.parse(film)["colecciones"].include?('OPE')  %>
+						<tr>
+							<td><img style="align: left" src="/images/OPE.jpg" ></td>
+						</tr>
+						<% end %>
+
+
+						<% if JSON.parse(film)["colecciones"].include?('T250')  %>
+						<tr>
+							<td><img style="align: left" src="/images/T250.jpg" ></td>
+						</tr>
+						<% end %>
+						  
+						<tr>
+						  <td >
+								<form method="POST" action="" id="form_id">
+									<div style="width: 210px">
+									
+										<a class="boton" onclick="Grabar();" >
+											<img alt="Grabar" src="./images/Grabar.jpg" >
+										</a> 
+										<% if JSON.parse(film)["id"] != 0 %>
+											<% if JSON.parse(film)["media"] == 'DSK01' %>
+												<a class="boton" onclick="Publicar();" >
+													<img alt="Publicar" src="./images/Publicar.jpg" >
+												</a> 
+											<% end %>
+											<a class="boton" onclick="Eliminar();" >
+												<img alt="Eliminar" src="./images/Eliminar.jpg" >
+											</a> 
+										<% end %>
+										<a class="boton" onclick="window.history.go(<%=lavuelta%>);" >
+											<img alt="Volver" src="./images/Volver.jpg" >
+										</a> 	 
+									</div>
+								   <input name="param0" value="" type="hidden" />
+								</form>
+						   </td>
+						</tr>
+				   </table>
+			   </td>
             </tr>
       </table>
       <br>
@@ -279,6 +305,8 @@
 			var param = <%=film%>;		
 			var param1 = <%=formas%>;
 			var param2 = <%=medios%>;
+			
+			console.log(param);
 			document.getElementsByName("Xtitulo")[0].value = param["titulo"];
 			document.getElementsByName("Xanio")[0].value = param["anio"];
 			document.getElementsByName("Xoriginal")[0].value = param["titulo_original"];
