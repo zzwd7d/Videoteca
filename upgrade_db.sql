@@ -163,6 +163,34 @@ insert into colecciones values ('OPE','tt6155172');
 insert into colecciones values ('OPE','tt6751668');
 insert into colecciones values ('OPE','tt10288566');
 insert into colecciones values ('OMP','tt9770150');
+insert into colecciones values ('007','tt0055928');
+insert into colecciones values ('007','tt0057076');
+insert into colecciones values ('007','tt0058150');
+insert into colecciones values ('007','tt0059800');
+insert into colecciones values ('007','tt0062512');
+insert into colecciones values ('007','tt0061452');
+insert into colecciones values ('007','tt0064757');
+insert into colecciones values ('007','tt0066995');
+insert into colecciones values ('007','tt0070328');
+insert into colecciones values ('007','tt0071807');
+insert into colecciones values ('007','tt0076752');
+insert into colecciones values ('007','tt0079574');
+insert into colecciones values ('007','tt0082398');
+insert into colecciones values ('007','tt0086034');
+insert into colecciones values ('007','tt0086006');
+insert into colecciones values ('007','tt0090264');
+insert into colecciones values ('007','tt0093428');
+insert into colecciones values ('007','tt0097742');
+insert into colecciones values ('007','tt0113189');
+insert into colecciones values ('007','tt0120347');
+insert into colecciones values ('007','tt0143145');
+insert into colecciones values ('007','tt0246460');
+insert into colecciones values ('007','tt0381061');
+insert into colecciones values ('007','tt0830515');
+insert into colecciones values ('007','tt1074638');
+insert into colecciones values ('007','tt2379713');
+insert into colecciones values ('007','tt2382320');
+
 commit;
 
 

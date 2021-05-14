@@ -25,7 +25,8 @@ DECADAS = [["0000~1939","Anterior a 1940"],
 
 COLECCIONES = [["OMP","Oscar Mejor Película"],
 			   ["OPE","Oscar Película Extranjera"],
-               ["T250","Top 250 IMDB"]]
+               ["T250","Top 250 IMDB"],
+			   ["007","James Bond 007"]]
 
 
 

@@ -250,26 +250,16 @@
 			  </td>
 			  <td style="align: left; vertical-align: bottom">
 					<table>
-
-						<% if JSON.parse(film)["colecciones"].include?('OMP')  %>
-						<tr>
-							<td><img style="align: left" src="/images/OMP.jpg" ></td>
-						</tr>
-						<% end %>
-
-						<% if JSON.parse(film)["colecciones"].include?('OPE')  %>
-						<tr>
-							<td><img style="align: left" src="/images/OPE.jpg" ></td>
-						</tr>
+					
+						<% COLECCIONES.each do |name| %>
+							<% if JSON.parse(film)["colecciones"].include?(name[0])  %>
+								<tr>
+									<td><img style="align: left" src="/images/<%=name[0]%>.jpg" ></td>
+								</tr>
+							<% end %>
 						<% end %>
 
 
-						<% if JSON.parse(film)["colecciones"].include?('T250')  %>
-						<tr>
-							<td><img style="align: left" src="/images/T250.jpg" ></td>
-						</tr>
-						<% end %>
-						  
 						<tr>
 						  <td >
 								<form method="POST" action="" id="form_id">
