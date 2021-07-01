@@ -1,391 +1,340 @@
 #=> #<Encoding:UTF-8>
 class IMDB2
-  # To change this template use File | Settings | File Templates.
-  require 'open-uri'
-  require 'nokogiri'
-
-  def initialize (tipo, dato )
-    #p dato
-    @code = dato.strip.gsub(/ /,'+')
-    if tipo == 'list'
-      url = "https://www.imdb.com/find?q=" + @code + "&s=tt"
-    else
-      url = "https://www.imdb.com/title/" + dato
-    end
-    (1..5).each do |n|
-      begin
-        f = open(url,{ssl_verify_mode: 0}) #OpenSSL::SSL::VERIFY_NONE}) #,
-             #"User-Agent" => "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17")
-        @doc = Nokogiri::HTML(f)
-        break
-      rescue => e
-        puts "ERROR "+"("+n.to_s+" de 5) buscando "+url+ " -> error: "+e.message
-		    sleep(10)
-      end
-    end
-  end
-
-  def movies
-    @movies =[]
-    titulos =[]
-    @doc.xpath('//td[@class = "result_text"]').each  do |node|
-                                                       titulos << node.text.split('aka')[0].strip
-                                                     end
-    refers = []
-    @doc.xpath('//td[@class = "result_text"]/a').each  do |node|
-                                                         refers << node['href'].split('/')[2]
-                                                       end
-    for i in 0..(titulos.count - 1)
-      if not(titulos[i].include? "TV Episode") and not(titulos[i].include? "Video Game")
-        aux=[]
-        aux << titulos[i]
-        aux << refers[i]
-        @movies << aux
-      end
-    end
-    @movies
-  end
-  
-  def es_serie
-	  es_serie = false
-	  serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
-	  aux = serie_text.split('|')
-	  if aux[-1].strip.include? "TV" and  aux[-1].strip.include? "Serie"
-		  es_serie = true
-	  end 
-  	es_serie
-  end
-
-  def title
-    title = []
-    title_text = @doc.xpath('//div[@class="title_wrapper"]').text
-    title_text = title_text.delete("\n").delete("\"").gsub(/[()]/, '|')
-    aux = title_text.split('|')
-    if aux[3] != "original title"
-      aux[2] = aux[0]
-    end
-    aux[3]=@code
-
-    for i in 0..3
-      title << aux[i].strip.force_encoding('UTF-8')
-    end
-
-    title
-  end
-
-  def title2
-    title = []
-    title_text = @doc.xpath('//div[@class="title_wrapper"]').text
-    title_text = title_text.delete("\n").delete("\"").gsub(/[()]/, '|')
-    aux = title_text.split('|')
-    if aux[3] != "original title"
-      aux[2] = aux[0]
-    end
-   
-	  title << sin_C2A0(aux[0]).strip
-	  title << sin_C2A0(aux[2]).strip
-	  title << @code
-
-    title
-  end
-
-  def title_serie
-    title = []
-    title << @doc.xpath('//div[@class="title_wrapper"]/h1').text.strip
-	  title_text = @doc.xpath('//div[@class="title_wrapper"]/div[@class="originalTitle"]').text.split('(')[0]
-	  if title_text.nil? 
-		  title << title[0]
-	  else
-		  title << title_text.strip 
-	  end
-	  title << @code
+	# To change this template use File | Settings | File Templates.
 	
-    title
-  end
-
-  def anio
-    title = []
-    title_text = @doc.xpath('//div[@class="title_wrapper"]').text
-    title_text = title_text.delete("\n").delete("\"").gsub(/[()]/, '|')
-    aux = title_text.split('|')
-   
-	  title << aux[1]
-
-    title
-
-  end
-
-  def anio_serie
-	  title =	[]
-	  serie_text = @doc.xpath('//div[@class="title_wrapper"]').text
-	  aux = serie_text.split('|')
+	require 'open-uri'
+	require 'nokogiri'
 	
-	  title << aux[-1].split('(')[1].split(')')[0]
+	require 'uri'
+	require 'net/http'
+	require 'openssl'
+	require 'json'
+	
+	def busca_data (api_name, tt) 
+		url = URI("https://imdb8.p.rapidapi.com/title/"+api_name+"?tconst="+tt)
 
-	   title
-  end
+		http = Net::HTTP.new(url.host, url.port)
+		http.use_ssl = true
+		http.verify_mode = OpenSSL::SSL::VERIFY_NONE
 
-  def director
-    salida = []
-    x_text = @doc.xpath('//div[@class="credit_summary_item"]').text #.delete("\n")
-	  aux = x_text.split("\n")
-	  aux.each_with_index do |valor, ind| 
-		  if valor.include? "Director" 
-			  aux[ind+1].split(',').each do |name|
-				  salida << name.delete('|').strip
-			  end
-			  break
-		  end	
-	  end	 
-    salida
-  end
-  
-  def genre
-    salida = []
-  	x_text = @doc.xpath('//div[@class="see-more inline canwrap"]').text 
-	  aux = x_text.split("\n")
-	  hay = false
-	  aux.each_with_index do |valor, ind| 
-		  if hay
-			  salida << sin_C2A0(valor.delete("|")).strip
-			  if not valor.include? "|"
-				  hay = false
-			  end
-		  end
-		  if valor.include? "Genre"
-			  hay = true		
-		  end
-	  end
-    salida
-  end
+		request = Net::HTTP::Get.new(url)
+		request["x-rapidapi-key"] = @apiKey    #'28931b19cbmshe112f0c06240729p159347jsn6137189f0601'
+		request["x-rapidapi-host"] = 'imdb8.p.rapidapi.com'
 
-  def writer
-    salida = []
-    x_text = @doc.xpath('//div[@class="credit_summary_item"]').text #.delete("\n")
-	  aux = x_text.split("\n")
-	  aux.each_with_index do |valor, ind| 
-		  if valor.include? "Writer" 
-			  aux[ind+1].split(',').each do |name|
-				  salida << name.delete('|').split('(')[0].strip
-			  end
-			  break
-		  end	
-	  end	 
-    salida
-  end
+		response = http.request(request)
 
-  def creator
-    salida = []
-    x_text = @doc.xpath('//div[@class="credit_summary_item"]').text #.delete("\n")
-	  aux = x_text.split("\n")
-	  aux.each_with_index do |valor, ind| 
-		  if valor.include? "Creator" 
-			  aux[ind+1].split(',').each do |name|
-				  salida << name.delete('|').split('(')[0].strip
-			  end
-			  break
-		  end	
-	  end	 
-    salida
-  end
+		puts "API Info => Restan: #{response.to_hash["x-ratelimit-requests-remaining"][0]} - tiempo reset: #{response.to_hash["x-ratelimit-requests-reset"][0]}"
 
-  def country
-    @country = findTag("Countr")
-  end
-
-  def language
-    @language = findTag("Language")
-  end
-
-  def sound
-    @sound = findTag("Sound Mix")
-  end
-
-  def color
-    @color = findTag('Color')
-  end
-
-  def findTag (tag)
-    @findTag = []
-    @doc.xpath('//div[@class = "txt-block"]').each  do |node|
-      line = node.text.delete("\n").strip
-      if line.index(tag) == 0
-        line = line.gsub(/[:,]/, '|')
-        aux = line.split('|')
-        for i in 1..(aux.count - 1)
-          auxS = aux[i].split('(')[0].strip
-          if not auxS.include? " more "
-            @findTag << auxS
-          end
-        end
-      end
-    end
-    @findTag
-  end
-
-  def cast
-    salida = []
-	  actor = []
-    personaje = []		
-    @doc.xpath('//table[@class="cast_list"]//td').each_with_index do |valor, ind| 	
-  		if ind % 2 == 0 and ind > 0 and not(ind % 4 == 0)
-	  		actor << valor.text.delete("\n").strip
-		  end
-		  if ind > 0 and ind % 4 == 0
-			  personaje << internalSpaces(valor.text.delete("\n")).split('(')[0].strip  
-		  end
-	  end
-		
-	  for i in 0..(actor.count - 1 )
-		  aux = []
-		  aux << actor[i]
-		  aux << personaje[i]
-		  salida << aux
-	  end
-    salida
-  end
-  
-  def en_coleccion(i_code)
-    r = Coleccion.where(:imdb_code => i_code)
-	salida = []
-	r.each do |cada|
-		salida << cada.coleccion_code
+		JSON.parse(response.read_body)
 	end
-	salida
- end
 
-  def cast_serie
-    salida = []
-	  actor = []
-    personaje = []		
-    @doc.xpath('//table[@class="cast_list"]//td').each_with_index do |valor, ind| 
-		  if valor.to_s.include? '/name/' and not valor.to_s.include? '<img'
-			  actor << valor.text.delete("\n").strip
-		  end
-		  if valor.to_s.include? 'class="character"'
-			  personaje << valor.text.delete("\n").strip.split('  ')[0]
-		  end
-	  end
-	
-  	for i in 0..(actor.count - 1 )
-	  	aux = []
-	  	aux << actor[i]
-	  	aux << personaje[i]
-	  	salida << aux
-	  end
-    salida
-  end
-
-  def poster
-    @poster =[]
-    @doc.xpath('//div[@class="poster"]/a/img').each do |node|
-      @poster << node['src']
-    end
-    @poster
-  end
-  
-  def json_movie_test ()
-    res = Hash.new
-    
-    if not(self.es_serie)
-      res["spanish title"] = self.title2[0]
-      res["original title"]  = self.title2[1]
-      res["year"] = self.anio[0]
-      res["imdbcode"] = self.title2[2]
-      res["writer"] = self.writer
-      res["cast"] = self.cast
-    else
-      res["spanish title"] = self.title_serie[0]
-      res["original title"] = self.title_serie[1]
-      res["year"] = self.anio_serie[0]
-      res["imdbcode"] = self.title_serie[2]
-      res["writer"] =  self.creator
-      res["cast"] = self.cast_serie
-    end
-  
-	  res["director"] = self.director
-	  res["genre"] = self.genre
-	  res["country"] = self.country
-	  res["language"] = self.language
-	  res["sound"] = self.sound
-	  res["color"] = self.color
-	  res["poster"] = self.poster[0]
-
-	  res	
-	
-  end
-  
-  def json_movie 
-    res = Hash.new
-	res["id"] = 0
-    if not(self.es_serie)
-      res["titulo"] = self.title2[0]
-      res["titulo_original"]  = self.title2[1]
-      res["anio"] = self.anio[0]
-      res["imdb_code"] = self.title2[2]
-      res["writer"] = peli_2_array(self.writer)
-      elcast = self.cast
-    else
-      res["titulo"] = self.title_serie[0]
-      res["titulo_original"] = self.title_serie[1]
-      res["anio"] = self.anio_serie[0]
-      res["imdb_code"] = self.title_serie[2]
-      res["writer"] =  peli_2_array(self.creator)
-      elcast = self.cast_serie
-    end
-	
-	newcast = []
-	elcast.each do |uno|
-	#	puts "0 #{uno[0]} - 1 #{uno[1]} "
-		newcast.push("nombre" => uno[0],"personaje" =>uno[1])	
-	#	puts newcast
+	def initialize (tipo, dato, clave)
+		@code = dato.strip.gsub(/ /,'+')
+		@apiKey = clave
+		if tipo == 'list'
+			url = "https://www.imdb.com/find?q=" + @code + "&s=tt"
+			(1..5).each do |n|
+				begin
+					userAgent = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.17 (KHTML, like Gecko) Chrome/24.0.1312.52 Safari/537.17"
+					f = open(url, {ssl_verify_mode: 0}) #OpenSSL::SSL::VERIFY_NONE}) #,
+					@doc = Nokogiri::HTML(f, nil, Encoding::UTF_8.to_s)
+					break
+				rescue => e
+					puts "ERROR "+"("+n.to_s+" de 5) buscando "+url+ " -> error: "+e.message
+					sleep(10)
+				end
+			end
+		else
+			@res = busca_data("get-overview-details",dato)
+			@res1 = busca_data("get-versions",dato)
+			@res2 = busca_data("get-full-credits",dato)
+			@res3 = busca_data("get-technical",dato)
+		end
 	end
-	res["elenco"] = newcast
-	res["director"] = peli_2_array(self.director)
-	res["genero"] = peli_2_array(self.genre)
-	res["nacion"] = peli_2_array(self.country)
-	res["idioma"] = peli_2_array(self.language)
-	res["sonido"] = peli_2_array(self.sound)
-	res["color"] = peli_2_array(self.color)
-	
-	ximg = "./public/auxiliar/" + res["imdb_code"] + ".jpg"
-	url_poster = self.poster
-	if url_poster.count == 0
-		FileUtils.copy_file( "./public/images/noposter.jpg",ximg)
-	else
-		File.open(ximg, 'wb') do |fo|
-			fo.write open(url_poster[0]).read
+
+    def movies
+		@movies =[]
+		titulos =[]
+
+		@doc.xpath('//td[@class = "result_text"]').each do |node|
+			titulos << node.text.split('aka')[0].strip
 		end	
+		refers = []
+		@doc.xpath('//td[@class = "result_text"]/a').each do |node|
+			refers << node['href'].split('/')[2]
+		end
+		for i in 0..(titulos.count - 1)
+			if not(titulos[i].include? "TV Episode") and not(titulos[i].include? "Video Game")
+				aux=[]
+				aux << titulos[i]
+				aux << refers[i]
+				@movies << aux
+			end
+		end
+		
+			
+		if @movies.size == 0
+			aux=[]
+			aux << 'No hay títulos'
+			aux << 'no-tt'
+			@movies << aux
+		end
+		
+		@movies
 	end
-	res["poster"] = "/auxiliar/" + res["imdb_code"] + ".jpg"
-	res["colecciones"] = en_coleccion(res["imdb_code"])
-	res["comment"] = ""
-	res["formato"] = "N/A"
-	res["media"] = "N/A"
-	
-	res
-  end
   
-  def peli_2_array (x)
-  	newarr = []
-	x.each do |uno|
-		#puts "0 #{uno[0]} - 1 #{uno[1]} "
-		newarr.push("nombre" =>uno)	
-		#puts newcast
+	def es_serie
+		es_serie = true
+		
+		if @res["title"]["titleType"] == 'movie'
+			es_serie = false
+		end 
+  	
+		es_serie
 	end
-	newarr
-  end
-  
-  def sin_C2A0 (x)
-	  x.gsub(/\p{Space}/,' ') unless x.nil?
-  end
 
-  def internalSpaces(txt)
-    while txt.include? "  "
-      txt = txt.gsub("  "," ")
-    end
-    txt
-  end
+	def title2
+		title = []
+ 
+		title_text = ""
+		@res1["alternateTitles"].each do |untit|
+			if untit["region"] == 'AR'
+				title_text = untit["title"]
+				break
+			end
+		end
+		title << title_text
+	
+		title << @res1["originalTitle"]
+   
+		title << @code
+
+		title
+	end
+
+	def anio
+		title = []
+
+		title << @res["title"]["year"]
+
+		title
+	end
+
+	def director
+		salida = []
+		if not @res2["crew"]["director"].nil?
+			@res2["crew"]["director"].each do |undir|
+				salida << undir["name"]
+			end
+		end
+
+		salida
+	end
+  
+	def genre
+		@res["genres"]
+	end
+
+	def writer
+		salida = []
+		if not @res2["crew"]["writer"].nil?
+			@res2["crew"]["writer"].each do |undir|
+				salida << undir["name"]
+			end
+		end
+		salida
+	end
+
+	def creator
+		salida = []
+		if not @res2["crew"]["writer"].nil?
+			@res2["crew"]["writer"].each do |undir|
+				if undir["job"] == "created by" or undir["job"] == "creator" 
+					salida << undir["name"]
+				end
+			end
+		end
+		salida
+	end
+
+	def country
+		salida = []
+		if not @res1["origins"].nil?
+			@res1["origins"].each do |ispa|
+				pais = ispa
+				ISO_COUNTRIES.each do |uno|
+					if uno[:"alpha-2"] == ispa then
+						pais = uno[:"name"]
+						break
+					end
+				end
+				salida << pais
+			end
+		end
+		salida
+	end
+
+	def language
+		salida=[]
+		if not @res1["spokenLanguages"].nil?
+			@res1["spokenLanguages"].each do |lengua|
+				idio = lengua
+				ISO_LANGUAJES.each do |k,v|
+					if k.to_s == lengua then 
+						idio = v[:"name"].split(',')[0]
+						break
+					end
+				end
+				salida << idio
+			end
+		end
+		salida
+	end
+
+	def sound
+		salida = []
+		if not @res3["soundMixes"].nil?
+			@res3["soundMixes"].each do |undir|
+				salida << undir.split('(')[0].strip
+			end
+		end
+		salida
+	end
+
+	def color
+		salida = []
+		if not @res3["colorations"].nil?
+			@res3["colorations"].each do |undir|
+				salida << undir.split('(')[0].strip
+			end
+		end
+		salida
+	end
+
+	def cast
+		salida = []
+		(0 .. 19).each do |nro|
+			if not @res2["cast"][nro].nil?
+				actor = @res2["cast"][nro]["name"]
+				personaje = ""
+				if not @res2["cast"][nro]["characters"].nil?
+					@res2["cast"][nro]["characters"].each do |uno|
+						personaje += " / " + uno 
+					end
+				else	
+					personaje = " / "
+				end
+				salida << [actor, personaje[3 .. -1]] 
+			end
+		end
+		salida	
+	end
+  
+	def en_coleccion(i_code)
+		r = Coleccion.where(:imdb_code => i_code)
+		salida = []
+		r.each do |cada|
+			salida << cada.coleccion_code
+		end
+		salida
+	end
+
+	def poster
+		salida = []
+		salida << @res["title"]["image"]["url"]
+		salida
+	end
+  
+	def json_movie_test ()
+		res = Hash.new
+		if not(self.es_serie)
+			res["spanish title"] = self.title2[0]
+			res["original title"]  = self.title2[1]
+			res["year"] = self.anio[0]
+			res["imdbcode"] = self.title2[2]
+			res["writer"] = self.writer
+			res["cast"] = self.cast
+		else
+			res["spanish title"] = self.title_serie[0]
+			res["original title"] = self.title_serie[1]
+			res["year"] = self.anio_serie[0]
+			res["imdbcode"] = self.title_serie[2]
+			res["writer"] =  self.creator
+			res["cast"] = self.cast_serie
+		end
+		res["director"] = self.director
+		res["genre"] = self.genre
+		res["country"] = self.country
+		res["language"] = self.language
+		res["sound"] = self.sound
+		res["color"] = self.color
+		res["poster"] = self.poster[0]
+		res	
+	end
+  
+	def json_movie ()
+		res = Hash.new
+		res["id"] = 0
+		res["titulo"] = self.title2[0]
+		res["titulo_original"]  = self.title2[1]
+		res["anio"] = self.anio[0]
+		res["imdb_code"] = self.title2[2]
+
+		if not(self.es_serie)
+			res["writer"] = peli_2_array(self.writer)
+		else
+			res["writer"] =  peli_2_array(self.creator)
+		end
+
+		elcast = self.cast	
+		newcast = []
+		elcast.each do |uno|
+			newcast.push("nombre" => uno[0],"personaje" =>uno[1])	
+		end
+		res["elenco"] = newcast
+		res["director"] = peli_2_array(self.director)
+		res["genero"] = peli_2_array(self.genre)
+		res["nacion"] = peli_2_array(self.country)
+		res["idioma"] = peli_2_array(self.language)
+		res["sonido"] = peli_2_array(self.sound)
+		res["color"] = peli_2_array(self.color)
+
+		ximg = "./public/auxiliar/" + res["imdb_code"] + ".jpg"
+		url_poster = self.poster
+		if url_poster.count == 0
+			FileUtils.copy_file( "./public/images/noposter.jpg",ximg)
+		else
+			File.open(ximg, 'wb') do |fo|
+				fo.write open(url_poster[0]).read
+			end	
+		end
+		res["poster"] = "/auxiliar/" + res["imdb_code"] + ".jpg"
+		res["colecciones"] = en_coleccion(res["imdb_code"])
+		res["comment"] = ""
+		res["formato"] = "N/A"
+		res["media"] = "N/A"
+
+		res
+	end
+  
+	def peli_2_array (x)
+		newarr = []
+		x.each do |uno|
+			newarr.push("nombre" =>uno)	
+		end
+		newarr
+	end
+  
+	def sin_C2A0 (x)
+		x.gsub(/\p{Space}/,' ') unless x.nil?
+	end
+
+	def internalSpaces(txt)
+		while txt.include? "  "
+			txt = txt.gsub("  "," ")
+		end
+		txt
+	end
 end
 
 

@@ -1,3 +1,5 @@
+#=> #<Encoding:UTF-8>
+
 require "sinatra"
 require 'sinatra/activerecord'
 require "./constantes"
@@ -30,6 +32,8 @@ set :dbase, @config["base"]["dbname"]
 
 set :origen, @config["publicar"]["origen"]
 set :destino, @config["publicar"]["destino"]
+
+set :rapidapiKey, @config["rapidapi"]["key"]
 
 p "ARRANCA #{@config['servicio']['ambiente']} - Modo #{Sinatra::Application.environment}"
 
@@ -147,7 +151,7 @@ post '/generaBusquedaName'  do
 	if session[:KeyName] == ""
 		movies_list = []
 	else
-		imdbx = IMDB2.new('list',session[:KeyName])
+		imdbx = IMDB2.new('list',session[:KeyName], settings.rapidapiKey)
 		movies_list = imdbx.movies
 	end
 	movies_list.to_json
@@ -158,7 +162,7 @@ post '/generaBusquedaCode'  do
 	if session[:imdbCode] == ""
 		movies_list = []
 	else
-		imdbx = IMDB2.new('movie',session[:imdbCode])
+		imdbx = IMDB2.new('movie',session[:imdbCode], settings.rapidapiKey)
 		movies_list = []
 		una_movie = []
 		movie = imdbx.json_movie()
@@ -174,7 +178,7 @@ post '/muestraPeli' do
 	if not params[:param0].nil?
 		existe = Pelicula.por_imdb_code(params[:param0])
 		if existe.nil?
-			imdbx = IMDB2.new('movie',params[:param0])
+			imdbx = IMDB2.new('movie',params[:param0], settings.rapidapiKey)
 			peli = imdbx.json_movie()  
 			erb :vid04, locals: {film: peli.to_json, formas: FORMATOS, medios: MEDIAS, lavuelta: -1}
 		else
